@@ -1,6 +1,8 @@
 # Airborne Coast Monitoring System for Sea Turtle Detection and Species Classification
 
-![Screenshot](images/context.png)
+<p align="center"> 
+<img src="images/context.png" />
+</p>
 
 ### Fully firebase integrated: Real-time DB, Firestore, Storage, Hosting, Auth, ML Kit
 
@@ -14,3 +16,5 @@
 ![Screenshot](images/completedmission.png)
 
 ![Screenshot](images/editmission.png)
+
+![Screenshot](images/editmissionmodal.png)

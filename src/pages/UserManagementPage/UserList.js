@@ -3,7 +3,7 @@ import React, {Component} from "react";
 import {withFirebase} from "../../components/Firebase";
 
 
-import {Loader, Table, Card, Dropdown} from "semantic-ui-react";
+import {Card, Dropdown, Loader, Table} from "semantic-ui-react";
 
 class UserList extends Component {
     constructor(props) {

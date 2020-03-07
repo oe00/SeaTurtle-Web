@@ -2,9 +2,7 @@ import React from "react";
 
 import {withFirebase} from "../../components/Firebase";
 
-import {
-    Container, Card, Button, Modal,
-} from "semantic-ui-react";
+import {Button, Card, Container, Modal,} from "semantic-ui-react";
 
 
 import MissionList from "./MissionList";

@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import { Button, Modal } from "semantic-ui-react";
+import React, {Component} from "react";
+import {Button, Modal} from "semantic-ui-react";
 import Card from "semantic-ui-react/dist/commonjs/views/Card";
-import { CommandState } from "../../constants/utils_types";
+import {CommandState} from "../../constants/utils_types";
 
 
 class CommandItem extends Component {

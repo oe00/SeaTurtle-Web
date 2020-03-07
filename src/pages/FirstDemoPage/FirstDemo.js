@@ -2,9 +2,7 @@ import React from "react";
 
 import {withFirebase} from "../../components/Firebase";
 
-import {
-    Grid, Tab,
-} from "semantic-ui-react";
+import {Grid, Tab,} from "semantic-ui-react";
 import CommandCard from "./CommandCard";
 import PictureMap from "./PictureMap";
 import PictureCard from "./PictureCard";

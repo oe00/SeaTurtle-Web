@@ -3,7 +3,7 @@ import React, {Component} from "react";
 import {withFirebase} from "../../components/Firebase";
 
 
-import {Table, Button, Card, Checkbox, Modal} from "semantic-ui-react";
+import {Button, Card, Checkbox, Modal, Table} from "semantic-ui-react";
 import MissionEditModal from "./MissionEditModal";
 
 class MissionList extends Component {

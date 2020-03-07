@@ -1,19 +1,12 @@
-import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import { compose } from 'recompose';
+import React, {Component} from 'react';
+import {withRouter} from 'react-router-dom';
+import {compose} from 'recompose';
 
-import { PasswordForgetLink } from '../PasswordForget';
-import { withFirebase } from '../Firebase';
+import {PasswordForgetLink} from '../PasswordForget';
+import {withFirebase} from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
-import {
-  Grid,
-  Form,
-  Button,
-  Header,
-  Message,
-  Image, Container,
-} from "semantic-ui-react";
+import {Button, Container, Form, Grid, Header, Image, Message,} from "semantic-ui-react";
 
 import turtle from "../../turtle.jpg";
 

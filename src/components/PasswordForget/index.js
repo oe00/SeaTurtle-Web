@@ -1,16 +1,10 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import React, {Component} from 'react';
+import {Link} from 'react-router-dom';
 
-import { withFirebase } from '../Firebase';
+import {withFirebase} from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
-import {
-  Grid,
-  Form,
-  Header,
-  Button,
-  Message,
-} from 'semantic-ui-react';
+import {Button, Form, Grid, Header, Message,} from 'semantic-ui-react';
 
 const PasswordForgetPage = () => (
   <Grid centered columns={2}>

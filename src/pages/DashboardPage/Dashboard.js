@@ -2,10 +2,7 @@ import React from "react";
 
 import {withFirebase} from "../../components/Firebase";
 
-import {
-    Button,
-    Card, Grid, Icon,
-} from "semantic-ui-react";
+import {Button, Card, Grid, Icon,} from "semantic-ui-react";
 
 
 function Dashboard() {

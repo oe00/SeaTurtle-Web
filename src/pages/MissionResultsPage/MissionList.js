@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 
 
-import {Table, Button, Card, Modal} from "semantic-ui-react";
+import {Button, Card, Modal, Table} from "semantic-ui-react";
 import MissionResultModal from "./MissionResultModal";
 import {withFirebase} from "../../components/Firebase";
 

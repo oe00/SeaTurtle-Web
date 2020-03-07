@@ -1,17 +1,11 @@
 import React, {Component} from "react";
-import {
-    Container,
-    Card,
-    Grid,
-    Loader,
-    Button, Dropdown
-} from "semantic-ui-react";
+import {Button, Card, Container, Dropdown, Grid, Loader} from "semantic-ui-react";
 import GoogleMapReact from "google-map-react";
 import MyGreatPlace from "./Marker";
 import MyGreatPlace2 from "../MissionResultsPage/Marker";
 import MissionCard from "./MissionCard";
 import {withFirebase} from "../../components/Firebase";
-import { MAPS_CONFIG } from "../../config";
+import {MAPS_CONFIG} from "../../config";
 
 const mapBorder = {width: "100% ", height: "80vh "};
 

@@ -1,9 +1,7 @@
 import React from "react";
 
 
-import {
-    Card, Segment,
-} from "semantic-ui-react";
+import {Card, Segment,} from "semantic-ui-react";
 
 function MissionCard(props) {
     const {mission, activeMission, resultMission} = props;

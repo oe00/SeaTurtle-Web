@@ -2,10 +2,7 @@ import React, {Component} from "react";
 import PictureList from "./PictureList";
 
 
-import {
-    Message,
-    Loader,
-} from "semantic-ui-react";
+import {Loader, Message,} from "semantic-ui-react";
 
 class PictureCard extends Component {
     constructor(props) {

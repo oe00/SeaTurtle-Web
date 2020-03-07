@@ -3,7 +3,6 @@ import {compose} from "recompose";
 
 import {withAuthorization, withEmailVerification} from "../../components/Session";
 import Dashboard from "./Dashboard";
-import {Container} from "semantic-ui-react";
 
 /**
  *

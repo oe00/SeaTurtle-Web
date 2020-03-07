@@ -1,20 +1,11 @@
 import React from 'react';
 import {compose} from 'recompose';
 
-import {
-    AuthUserContext,
-    withAuthorization,
-    withEmailVerification,
-} from '../../components/Session';
+import {AuthUserContext, withAuthorization, withEmailVerification,} from '../../components/Session';
 import {PasswordForgetForm} from '../../components/PasswordForget';
 import PasswordChangeForm from '../../components/PasswordChange';
 
-import {
-    Grid,
-    Card,
-    Header,
-    Container,
-} from 'semantic-ui-react';
+import {Card, Container, Grid, Header,} from 'semantic-ui-react';
 
 const AccountPage = () => (
     <AuthUserContext.Consumer>

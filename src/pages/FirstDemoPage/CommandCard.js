@@ -1,14 +1,9 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import CommandList from "./CommandList";
 
 
-import {
-  Card,
-  Message,
-  Button,
-  Loader,
-} from "semantic-ui-react";
-import { CommandState } from "../../constants/utils_types";
+import {Button, Card, Loader, Message,} from "semantic-ui-react";
+import {CommandState} from "../../constants/utils_types";
 
 class CommandCard extends Component {
   constructor(props) {

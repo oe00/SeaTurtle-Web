@@ -1,8 +1,8 @@
 import React, {Component} from "react";
-import {Container, Card, Grid, Segment} from "semantic-ui-react";
+import {Card, Container, Grid, Segment} from "semantic-ui-react";
 import GoogleMapReact from "google-map-react";
 import MyGreatPlace from "./Marker";
-import { MAPS_CONFIG } from "../../config";
+import {MAPS_CONFIG} from "../../config";
 
 const defaultCenter = {lat: 35.197970240448015, lng: 33.532330183981806};
 const defaultZoom = 9;

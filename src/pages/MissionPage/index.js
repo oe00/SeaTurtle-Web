@@ -4,7 +4,6 @@ import React from 'react';
 import {compose} from 'recompose';
 
 import {withAuthorization, withEmailVerification} from '../../components/Session';
-import {Container} from "semantic-ui-react";
 
 const MissionSelection = () => (
     <div>

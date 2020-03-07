@@ -1,7 +1,7 @@
 import React from "react";
 
-import { greatPlaceStyle } from "./markerStyle.js";
-import { Image, Modal, Popup } from "semantic-ui-react";
+import {greatPlaceStyle} from "./markerStyle.js";
+import {Image, Modal, Popup} from "semantic-ui-react";
 
 export default class MyGreatPlace extends React.Component {
 

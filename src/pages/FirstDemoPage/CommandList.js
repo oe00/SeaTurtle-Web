@@ -2,7 +2,7 @@ import React from 'react';
 
 import CommandItem from './CommandItem';
 
-import { Feed } from 'semantic-ui-react';
+import {Feed} from 'semantic-ui-react';
 
 const CommandList = ({
    commands, onClearCommand, onCancelCommand,

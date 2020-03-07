@@ -1,9 +1,9 @@
 import React, {Component} from "react";
-import {Container, Card, Grid, Loader, Message} from "semantic-ui-react";
+import {Card, Container, Grid, Loader, Message} from "semantic-ui-react";
 import GoogleMapReact from "google-map-react";
 import MyGreatPlace from "./Marker";
 import CommandList from "./CommandList";
-import { MAPS_CONFIG } from "../../config";
+import {MAPS_CONFIG} from "../../config";
 
 
 const mapBorder = {width: "100% ", height: "75vh "};

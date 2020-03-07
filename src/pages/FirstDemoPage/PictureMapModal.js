@@ -3,7 +3,7 @@ import {Modal} from "semantic-ui-react";
 import Image from "semantic-ui-react/dist/commonjs/elements/Image";
 import GoogleMapReact from "google-map-react";
 import MyGreatPlace from "./Marker";
-import { MAPS_CONFIG } from "../../config";
+import {MAPS_CONFIG} from "../../config";
 
 
 const mapBorder = {width: "100% ", height: "75vh "};

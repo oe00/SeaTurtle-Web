@@ -11,6 +11,8 @@
 - Login: demo@metu.edu 
 - Pass: demo123
 
+![Screenshot](images/startmission.png)
+
 ![Screenshot](images/activemission.png)
 
 ![Screenshot](images/completedmission.png)

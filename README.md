@@ -4,6 +4,7 @@
 <img src="images/context.png" />
 </p>
 
+### Written using React.js and Semantic UI.
 ### Fully firebase integrated: Real-time DB, Firestore, Storage, Hosting, Auth, ML Kit
 
 

@@ -8,7 +8,7 @@ import {Button, Card, Grid, Icon,} from "semantic-ui-react";
 function Dashboard() {
     return (
         <Grid>
-            <Grid.Column width={4}>
+            <Grid.Column width={5}>
                 <Card fluid>
                     <Card.Content>
                         <Card.Header>

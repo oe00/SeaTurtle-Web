@@ -41,6 +41,7 @@ export default class MyGreatPlace extends Component {
             );
         } else if (text !== null && this.state.counter === 0) {
             return (
+                <div onContextMenu={() => this.props.handleRightClick(lat,lng)}>
                 <Popup hideOnScroll position="top center"
                        trigger={<div style={greatPlaceStyle}> {text}</div>}>
                     <Segment.Group horizontal compact>
@@ -48,6 +49,7 @@ export default class MyGreatPlace extends Component {
                         <Segment><h3>Longitude</h3>{lng.toFixed(4)}</Segment>
                     </Segment.Group>
                 </Popup>
+                </div>
             );
         } else if (this.state.counter === 1) {
             return (<Modal open={true} closeIcon onClose={this.handleClose}>

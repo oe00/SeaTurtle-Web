@@ -4,6 +4,7 @@ import GoogleMapReact from "google-map-react";
 import MyGreatPlace from "./Marker";
 import {getDistance} from "geolib";
 import {MAPS_CONFIG} from "../../config";
+import * as ReactDOM from "react-dom";
 
 const defaultCenter = {lat: 35.197970240448015, lng: 33.532330183981806};
 const defaultZoom = 9;
@@ -40,19 +41,18 @@ class MissionEditModal extends Component {
     }
 
 
-    handleMapClick = (map) => {
+    handleMapClick = async (map) => {
         const location = {latitude: map.lat, longitude: map.lng};
-        this.setState(prevState => ({
+        await this.setState(prevState => ({
             locations: [...prevState.locations, location],
         }), this.locationDistanceUpdate);
     };
 
-    handleChildClick = (key, childProps) => {
-        return;
+    handleChildClick = async (lat,lng) =>{
         const newState = [...this.state.locations];
-        const index = newState.findIndex(i => i.latitude === childProps.lat && i.longitude === childProps.lng);
+        const index = newState.findIndex(i => i.latitude === lat && i.longitude === lng);
         newState.splice(index, 1);
-        this.setState({
+        await this.setState({
             locations: newState,
         }, this.locationDistanceUpdate);
     };
@@ -199,28 +199,11 @@ class MissionEditModal extends Component {
             draggable: false,
         });
 
-
         const newState = [...this.state.locations];
         newState.splice(childProps.id, 1, {latitude: mouse.lat, longitude: mouse.lng});
         this.setState({
             locations: newState,
         }, this.locationDistanceUpdate);
-
-        console.log(newState);
-
-    };
-
-    onCircleInteraction3 = (childKey, childProps, mouse) => {
-        this.setState({draggable: true});
-        // function is just a stub to test callbacks
-        console.log('onCircleInteraction3 called with', childKey, childProps, mouse);
-
-    };
-
-    onCircleInteraction2 = (childKey, childProps, mouse) => {
-        this.setState({draggable: false});
-        // function is just a stub to test callbacks
-        console.log('onCircleInteraction2 called with', childKey, childProps, mouse);
 
     };
 
@@ -273,10 +256,9 @@ class MissionEditModal extends Component {
                             bootstrapURLKeys={MAPS_CONFIG}
                             center={this.missionCenter(mission)}
                             zoom={this.missionZoom(mission)}
-                            onChildMouseDown={this.onCircleInteraction2}
-                            onChildMouseUp={this.onCircleInteraction3}
+                            onChildMouseDown={async () => await this.setState({draggable: !this.state.draggable})}
+                            onChildMouseUp={async () => await this.setState({draggable: !this.state.draggable})}
                             onChildMouseMove={this.onCircleInteraction}
-                            onChildRightClick={this.handleChildClick}
                             onClick={this.handleMapClick}
                             draggable={this.state.draggable}
                             yesIWantToUseGoogleMapApiInternals
@@ -287,7 +269,8 @@ class MissionEditModal extends Component {
                                     lat={location.latitude} lng={location.longitude} key={`marker-${index}`}
                                     id={index}
                                     text={index + 1}
-                                />);
+                                    handleRightClick={this.handleChildClick}
+                                  />);
                             })}
                         </GoogleMapReact>
                     </Container>

@@ -44,7 +44,7 @@ function MissionCard(props) {
                             <Segment>
                                 <h3>Edited</h3>
                                 {mission.editedBy ? mission.editedBy : "None"}<br/>
-                                {mission.editedAt ? mission.createdAt : "None"}<br/>
+                                {mission.editedAt ? mission.editedAt : "None"}<br/>
                             </Segment>
                         </Segment.Group>
                     </Card.Description>

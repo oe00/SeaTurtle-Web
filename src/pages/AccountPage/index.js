@@ -10,7 +10,7 @@ import {Card, Container, Grid, Header,} from 'semantic-ui-react';
 const AccountPage = () => (
     <AuthUserContext.Consumer>
         {authUser => (
-            <Container>
+            <>
                 <Header as="h1">Account: {authUser.email}</Header>
                 <Grid columns={2}>
                     <Grid.Column>
@@ -34,7 +34,7 @@ const AccountPage = () => (
                         </Card>
                     </Grid.Column>
                 </Grid>
-            </Container>
+            </>
         )}
     </AuthUserContext.Consumer>
 );

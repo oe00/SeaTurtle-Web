@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {Link} from "react-router-dom";
 
 import {AuthUserContext} from "../Session";
@@ -9,47 +9,72 @@ import * as ROLES from "../../constants/roles";
 
 import {Container, Menu} from "semantic-ui-react";
 
+const Navigation = () => {
 
-const Navigation = () => (
-    <AuthUserContext.Consumer>
-        {authUser =>
-            authUser ? (
-                <NavigationAuth authUser={authUser}/>
-            ) : (
-                <NavigationNonAuth/>
-            )
-        }
-    </AuthUserContext.Consumer>
-);
+    let i = null;
+    switch (window.location.pathname.toString()) {
+        case "/":
+            i = 1;
+            break;
+        case "/mission":
+            i = 2;
+            break;
+        case "/mission-results":
+            i = 3;
+            break;
+        case "/mission-management":
+            i = 4;
+            break;
+        case "/user-management":
+            i = 5;
+            break;
+        case "/first-demo":
+            i = 6;
+            break;
+        case"/account":
+            i = 7;
+            break;
+    }
 
-const NavigationAuth = ({authUser}) => (
-    <Menu pointing secondary>
-        <Container>
-            <Menu.Item name="Dashboard" as={Link} to={ROUTES.HOME}/>
-            <Menu.Item name="Mission" as={Link} to={ROUTES.MISSION}/>
-            <Menu.Item name="Mission Results" as={Link} to={ROUTES.MISSION_RESULTS}/>
-            {(authUser.role === ROLES.EXPERT || authUser.role === ROLES.ADMIN) && (
-                <Menu.Item name="Mission Management" as={Link} to={ROUTES.MISSION_MANAGEMENT}/>
-            )}
-            {authUser.role === ROLES.ADMIN && (
-                <Menu.Item name="User Management" as={Link} to={ROUTES.USER_MANAGEMENT}/>)}
-            <Menu.Item name="First Demo" as={Link} to={ROUTES.FIRST_DEMO}/>
-            <Menu.Menu position="right">
-                <Menu.Item name="Account" as={Link} to={ROUTES.ACCOUNT}/>
-                <SignOutButton/>
-            </Menu.Menu>
-        </Container>
-    </Menu>
-);
+    const [index, setIndex] = useState(i);
 
-const NavigationNonAuth = () => (
-    <>
-        <Menu pointing secondary>
-            <Container>
-                <Menu.Item name="SeaTurtle Web Login" as={Link} to={ROUTES.HOME}/>
-            </Container>
-        </Menu>
-    </>
-);
+    return (
+        <AuthUserContext.Consumer>
+            {authUser =>
+                authUser ? (
+                    <Menu size="huge" widths={8}>
+                        <Container fluid>
+                            <Menu.Item onClick={() => setIndex(1)} active={index === 1} name="Dashboard" as={Link}
+                                       to={ROUTES.HOME}/>
+                            <Menu.Item onClick={() => setIndex(2)} active={index === 2} name="Mission" as={Link}
+                                       to={ROUTES.MISSION}/>
+                            <Menu.Item onClick={() => setIndex(3)} active={index === 3} name="Mission Results" as={Link}
+                                       to={ROUTES.MISSION_RESULTS}/>
+                            {(authUser.role === ROLES.EXPERT || authUser.role === ROLES.ADMIN) && (
+                                <Menu.Item onClick={() => setIndex(4)} active={index === 4} name="Mission Management"
+                                           as={Link} to={ROUTES.MISSION_MANAGEMENT}/>
+                            )}
+                            {authUser.role === ROLES.ADMIN && (
+                                <Menu.Item onClick={() => setIndex(5)} active={index === 5} name="User Management"
+                                           as={Link} to={ROUTES.USER_MANAGEMENT}/>)}
+                            <Menu.Item onClick={() => setIndex(6)} active={index === 6} name="First Demo" as={Link}
+                                       to={ROUTES.FIRST_DEMO}/>
+
+                            <Menu.Item onClick={() => setIndex(7)} active={index === 7} name="Account" as={Link}
+                                       to={ROUTES.ACCOUNT}/>
+                            <SignOutButton/>
+                        </Container>
+                    </Menu>
+                ) : (
+                    <Menu size="huge" widths={1}>
+                        <Container fluid>
+                            <Menu.Item name="SeaTurtle Web Login" as={Link} to={ROUTES.HOME}/>
+                        </Container>
+                    </Menu>
+                )
+            }
+        </AuthUserContext.Consumer>);
+};
+
 
 export default Navigation;

@@ -7,10 +7,7 @@ import {Container} from "semantic-ui-react";
 import * as ROLES from "../../constants/roles";
 
 const MissionManagement = () => (
-    <Container>
-        <h1>Mission Management</h1>
         <MissionM/>
-    </Container>
 );
 
 const condition = authUser => (authUser === null ? false : authUser.role === ROLES.ADMIN || authUser.role === ROLES.EXPERT);

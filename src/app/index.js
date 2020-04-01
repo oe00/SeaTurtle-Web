@@ -22,24 +22,24 @@ import MissionResults from "../pages/MissionResultsPage";
 
 const App = () => (
     <Router>
-        <div>
+        <>
             <Navigation/>
-            <Container>
+            <Container className="stickyContainer">
                 <Route exact path={ROUTES.HOME} component={Home}/>
                 <Route exact path={ROUTES.FIRST_DEMO} component={Demo}/>
-                <Route path={ROUTES.MISSION} component={MissionSelection}/>
-                <Route path={ROUTES.MISSION_RESULTS} component={MissionResults}/>
-                <Route path={ROUTES.SIGN_IN} component={SignInPage}/>
-                <Route path={ROUTES.SIGN_UP} component={SignUpPage}/>
+                <Route exact path={ROUTES.MISSION} component={MissionSelection}/>
+                <Route exact path={ROUTES.MISSION_RESULTS} component={MissionResults}/>
+                <Route exact path={ROUTES.SIGN_IN} component={SignInPage}/>
+                <Route exact path={ROUTES.SIGN_UP} component={SignUpPage}/>
                 <Route
                     path={ROUTES.PASSWORD_FORGET}
                     component={PasswordForgetPage}
                 />
-                <Route path={ROUTES.ACCOUNT} component={AccountPage}/>
-                <Route path={ROUTES.USER_MANAGEMENT} component={AdminPage}/>
-                <Route path={ROUTES.MISSION_MANAGEMENT} component={MissionManagement}/>
+                <Route exact path={ROUTES.ACCOUNT} component={AccountPage}/>
+                <Route exact path={ROUTES.USER_MANAGEMENT} component={AdminPage}/>
+                <Route exact path={ROUTES.MISSION_MANAGEMENT} component={MissionManagement}/>
             </Container>
-        </div>
+        </>
     </Router>
 );
 

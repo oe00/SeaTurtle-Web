@@ -8,10 +8,8 @@ import UserList from "./UserList";
 import {Container} from "semantic-ui-react";
 
 const UserManagement = () => (
-    <Container>
-        <h1>User Management</h1>
         <UserList/>
-    </Container>
+
 );
 
 const condition = authUser => (authUser === null ? false : authUser.role === ROLES.ADMIN);

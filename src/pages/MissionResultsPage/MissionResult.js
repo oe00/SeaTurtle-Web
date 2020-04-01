@@ -28,7 +28,7 @@ class MissionResult extends React.Component {
         this.setState({loading: true, missions: []});
         this.props.firebase
             .missionHistories()
-            .orderBy("loggedAt","desc")
+            .orderBy("loggedAt", "desc")
             .get().then(snapshot => {
             snapshot.forEach(async doc => {
                 const missionObject = doc.data();
@@ -62,9 +62,7 @@ class MissionResult extends React.Component {
         const {missions} = this.state;
 
         return (
-            <Container>
-                <MissionList refresh={this.onListenForMissionHistoriesDatabase} missions={missions} {...this.props}/>
-            </Container>
+            <MissionList refresh={this.onListenForMissionHistoriesDatabase} missions={missions} {...this.props}/>
         );
     }
 }

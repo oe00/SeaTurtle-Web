@@ -6,10 +6,7 @@ import {withAuthorization, withEmailVerification} from '../../components/Session
 import {Container} from "semantic-ui-react";
 
 const MissionResults = () => (
-    <Container>
-        <h1>Mission Results</h1>
         <MissionR/>
-    </Container>
 );
 
 const condition = authUser => (authUser === null ? false : authUser);

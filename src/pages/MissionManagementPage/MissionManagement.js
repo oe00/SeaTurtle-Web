@@ -65,7 +65,7 @@ class MissionManagement extends React.Component {
         const {open, missions} = this.state;
 
         return (
-            <Container>
+            <>
                 <MissionList refresh={this.onListenForDatabase} missions={missions} {...this.props}/>
                 <Card.Content extra>
                     <Button positive onClick={this.open}>Create Mission</Button>
@@ -80,7 +80,7 @@ class MissionManagement extends React.Component {
                         </Modal.Content>
                     </Modal>
                 </Card.Content>
-            </Container>
+            </>
         );
     }
 }

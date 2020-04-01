@@ -49,3 +49,15 @@ code {
 .ui.large.modal {
   margin-top: 3em !important;
 }
+
+.stickyContainer {
+  width: 85% !important;
+  margin-top: 2rem !important;
+}
+
+.ui.menu .active.item {
+  background: rgba(0,0,0,.15);
+  color: rgba(0,0,0,.95);
+  font-weight: 700;
+  box-shadow: none;
+}

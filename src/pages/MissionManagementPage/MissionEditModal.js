@@ -34,19 +34,21 @@ class MissionEditModal extends Component {
             distance: missionDistance,
             errorName: false,
             errorDistance: false,
+            draggable: false
         };
 
     }
+
 
     handleMapClick = (map) => {
         const location = {latitude: map.lat, longitude: map.lng};
         this.setState(prevState => ({
             locations: [...prevState.locations, location],
         }), this.locationDistanceUpdate);
-
     };
 
     handleChildClick = (key, childProps) => {
+        return;
         const newState = [...this.state.locations];
         const index = newState.findIndex(i => i.latitude === childProps.lat && i.longitude === childProps.lng);
         newState.splice(index, 1);
@@ -54,6 +56,7 @@ class MissionEditModal extends Component {
             locations: newState,
         }, this.locationDistanceUpdate);
     };
+
     locationDistanceUpdate = () => {
         const {locations} = this.state;
 
@@ -64,7 +67,10 @@ class MissionEditModal extends Component {
                 {latitude: locations[i + 1].latitude, longitude: locations[i + 1].longitude}, 1);
         }
         this.setState({distance: ((sum_distance *= 2) / 1000.0).toFixed(2)});
-    }
+
+        this.renderPolylines(locations);
+    };
+
     missionCenter = (mission) => {
         if (!mission) {
             return defaultCenter;
@@ -77,7 +83,8 @@ class MissionEditModal extends Component {
             lat += r.latitude;
         });
         return {lat: lat / mission.route.length, lng: long / mission.route.length};
-    }
+    };
+
     missionZoom = (mission) => {
         if (!mission) {
             return defaultZoom;
@@ -151,6 +158,72 @@ class MissionEditModal extends Component {
         }
     };
 
+    testMapAPI = null;
+    testMap = null;
+    oldPath = null;
+
+    passMapReference(map, maps) {
+        this.testMap = map;
+        this.testMapAPI = maps;
+
+        this.renderPolylines(this.state.locations);
+    }
+
+    renderPolylines(locations) {
+
+        let maps = this.testMapAPI;
+
+        let locs = locations.map(l => {
+            return ({lat: l.latitude, lng: l.longitude})
+        });
+
+        if (this.oldPath != null) {
+            this.oldPath.setMap(null);
+        }
+
+        this.oldPath = new maps.Polygon({
+            path: locs,
+            strokeColor: '#000000',
+            strokeOpacity: 1,
+            strokeWeight: 4,
+            fillOpacity: 0,
+            map: this.testMap,
+        });
+
+
+    }
+
+    onCircleInteraction = (childKey, childProps, mouse) => {
+        // function is just a stub to test callbacks
+        this.setState({
+            draggable: false,
+        });
+
+
+        const newState = [...this.state.locations];
+        newState.splice(childProps.id, 1, {latitude: mouse.lat, longitude: mouse.lng});
+        this.setState({
+            locations: newState,
+        }, this.locationDistanceUpdate);
+
+        console.log(newState);
+
+    };
+
+    onCircleInteraction3 = (childKey, childProps, mouse) => {
+        this.setState({draggable: true});
+        // function is just a stub to test callbacks
+        console.log('onCircleInteraction3 called with', childKey, childProps, mouse);
+
+    };
+
+    onCircleInteraction2 = (childKey, childProps, mouse) => {
+        this.setState({draggable: false});
+        // function is just a stub to test callbacks
+        console.log('onCircleInteraction2 called with', childKey, childProps, mouse);
+
+    };
+
     handleChange = (e, {value}) => this.setState({inputName: value});
 
     render() {
@@ -200,12 +273,19 @@ class MissionEditModal extends Component {
                             bootstrapURLKeys={MAPS_CONFIG}
                             center={this.missionCenter(mission)}
                             zoom={this.missionZoom(mission)}
+                            onChildMouseDown={this.onCircleInteraction2}
+                            onChildMouseUp={this.onCircleInteraction3}
+                            onChildMouseMove={this.onCircleInteraction}
+                            onChildRightClick={this.handleChildClick}
                             onClick={this.handleMapClick}
-                            onChildClick={this.handleChildClick}
+                            draggable={this.state.draggable}
+                            yesIWantToUseGoogleMapApiInternals
+                            onGoogleApiLoaded={({map, maps}) => this.passMapReference(map, maps)}
                         >
                             {locations && locations.map((location, index) => {
                                 return (<MyGreatPlace
-                                    lat={location.latitude} lng={location.longitude} id={location.id}
+                                    lat={location.latitude} lng={location.longitude} key={`marker-${index}`}
+                                    id={index}
                                     text={index + 1}
                                 />);
                             })}
@@ -216,7 +296,6 @@ class MissionEditModal extends Component {
         </Grid>);
     }
 }
-
 
 
 export default MissionEditModal;

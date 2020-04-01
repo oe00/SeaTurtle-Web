@@ -41,6 +41,41 @@ class MissionS extends Component {
         this.onListenForActiveMission();
     }
 
+    testMapAPI = null;
+    testMap = null;
+    oldPath = null;
+
+    passMapReference(map, maps) {
+        this.testMap = map;
+        this.testMapAPI = maps;
+    }
+
+    renderPolylines(locations) {
+
+        let maps = this.testMapAPI;
+
+        console.log(locations)
+
+        let locs = locations.map(l => {
+            return ({lat: l.latitude, lng: l.longitude})
+        });
+
+        if(this.oldPath!=null){
+            this.oldPath.setMap(null);
+        }
+
+        this.oldPath = new maps.Polygon({
+            path: locs,
+            strokeColor: '#000000',
+            strokeOpacity: 1,
+            strokeWeight: 4,
+            fillOpacity: 0,
+            map: this.testMap,
+        });
+
+
+    }
+
     onListenForActiveMission = () => {
         this.props.firebase
             .activeMission()
@@ -165,18 +200,18 @@ class MissionS extends Component {
         let zoom = 18;
 
         if (mission.distance > 1) {
-            zoom = 15;
+            zoom = 16;
         }
         if (mission.distance > 2) {
-            zoom = 14;
-        }
-        if (mission.distance > 5) {
             zoom = 13;
         }
-        if (mission.distance > 10) {
+        if (mission.distance > 5) {
             zoom = 11;
         }
-        return isActive ? zoom + 1.35 : zoom;
+        if (mission.distance > 10) {
+            zoom = 10;
+        }
+        return isActive ? zoom + 1.5 : zoom;
     };
 
     updateSelected = (event, {selected, value}) => {
@@ -191,7 +226,10 @@ class MissionS extends Component {
             selectedIndex: index,
             center: this.missionCenter(mission),
             zoom: this.missionZoom(mission, false),
-        })
+        });
+
+        this.renderPolylines(mission.route);
+
     };
 
     handleStartMission = () => {
@@ -241,6 +279,8 @@ class MissionS extends Component {
             center: defaultCenter,
             prevMissionName: null,
         })
+
+        this.renderPolylines([]);
     }
 
     handleMockMissionFinish = () => {
@@ -330,6 +370,8 @@ class MissionS extends Component {
                                 bootstrapURLKeys={MAPS_CONFIG}
                                 center={center}
                                 zoom={zoom}
+                                yesIWantToUseGoogleMapApiInternals
+                                onGoogleApiLoaded={({map,maps}) => this.passMapReference(map,maps)}
                             >
                                 {selectedMission && selectedMission.route.map((location, index) => {
                                     return (<MyGreatPlace

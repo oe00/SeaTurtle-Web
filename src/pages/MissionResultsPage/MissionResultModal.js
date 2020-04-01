@@ -5,7 +5,7 @@ import MyGreatPlace from "./Marker";
 import {MAPS_CONFIG} from "../../config";
 
 const defaultCenter = {lat: 35.197970240448015, lng: 33.532330183981806};
-const defaultZoom = 9;
+const defaultZoom = 11;
 
 const mapBorder = {width: "100% ", height: "75vh "};
 
@@ -52,22 +52,22 @@ class MissionResultModal extends Component {
             return defaultZoom;
         }
 
-        let zoom = 18;
+        let zoom = defaultZoom;
 
         if (distance > 1) {
-            zoom = 15;
+            zoom = 16;
         }
         if (distance > 2) {
+            zoom = 15;
+        }
+        if (distance > 4) {
             zoom = 14;
         }
-        if (distance > 5) {
+        if (distance > 8) {
             zoom = 13;
         }
-        if (distance > 10) {
-            zoom = 11;
-        }
 
-        return zoom + 1.35;
+        return zoom + 1;
     };
 
     render() {

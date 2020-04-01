@@ -7,10 +7,10 @@ import MissionCard from "./MissionCard";
 import {withFirebase} from "../../components/Firebase";
 import {MAPS_CONFIG} from "../../config";
 
-const mapBorder = {width: "100% ", height: "80vh "};
+const mapBorder = {width: "100% ", height: "80vh"};
 
 const defaultCenter = {lat: 35.197970240448015, lng: 33.532330183981806};
-const defaultZoom = 8;
+const defaultZoom = 9;
 
 class MissionS extends Component {
     constructor(props) {
@@ -197,7 +197,8 @@ class MissionS extends Component {
         if (!mission) {
             return defaultZoom;
         }
-        let zoom = 20;
+
+        let zoom = defaultZoom;
 
         if (mission.distance > 1) {
             zoom = 16;

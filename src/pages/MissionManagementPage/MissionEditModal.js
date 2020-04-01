@@ -4,10 +4,9 @@ import GoogleMapReact from "google-map-react";
 import MyGreatPlace from "./Marker";
 import {getDistance} from "geolib";
 import {MAPS_CONFIG} from "../../config";
-import * as ReactDOM from "react-dom";
 
 const defaultCenter = {lat: 35.197970240448015, lng: 33.532330183981806};
-const defaultZoom = 9;
+const defaultZoom = 11;
 
 const mapBorder = {width: "100% ", height: "75vh "};
 
@@ -91,7 +90,7 @@ class MissionEditModal extends Component {
             return defaultZoom;
         }
 
-        let zoom = 18;
+        let zoom = defaultZoom;
 
         if (mission.distance > 1) {
             zoom = 15;
@@ -99,14 +98,14 @@ class MissionEditModal extends Component {
         if (mission.distance > 2) {
             zoom = 14;
         }
-        if (mission.distance > 5) {
+        if (mission.distance > 4) {
             zoom = 13;
         }
-        if (mission.distance > 10) {
-            zoom = 11;
+        if (mission.distance > 8) {
+            zoom = 12;
         }
 
-        return zoom + 1.35;
+        return zoom + 1;
     };
 
     submitMe = () => {
@@ -255,6 +254,7 @@ class MissionEditModal extends Component {
                     <Container style={mapBorder}>
                         <GoogleMapReact
                             bootstrapURLKeys={MAPS_CONFIG}
+                            options={{mapTypeControl:true,mapTypeId:"terrain"}}
                             center={this.missionCenter(mission)}
                             zoom={this.missionZoom(mission)}
                             onChildMouseDown={async () => await this.setState({draggable: !this.state.draggable,hidePopup:false})}

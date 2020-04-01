@@ -35,7 +35,8 @@ class MissionEditModal extends Component {
             distance: missionDistance,
             errorName: false,
             errorDistance: false,
-            draggable: false
+            draggable: true,
+            hidePopup: false,
         };
 
     }
@@ -183,7 +184,7 @@ class MissionEditModal extends Component {
 
         this.oldPath = new maps.Polygon({
             path: locs,
-            strokeColor: '#000000',
+            strokeColor: '#f44336',
             strokeOpacity: 1,
             strokeWeight: 4,
             fillOpacity: 0,
@@ -194,9 +195,9 @@ class MissionEditModal extends Component {
     }
 
     onCircleInteraction = (childKey, childProps, mouse) => {
-        // function is just a stub to test callbacks
         this.setState({
             draggable: false,
+            hidePopup:true,
         });
 
         const newState = [...this.state.locations];
@@ -256,8 +257,8 @@ class MissionEditModal extends Component {
                             bootstrapURLKeys={MAPS_CONFIG}
                             center={this.missionCenter(mission)}
                             zoom={this.missionZoom(mission)}
-                            onChildMouseDown={async () => await this.setState({draggable: !this.state.draggable})}
-                            onChildMouseUp={async () => await this.setState({draggable: !this.state.draggable})}
+                            onChildMouseDown={async () => await this.setState({draggable: !this.state.draggable,hidePopup:false})}
+                            onChildMouseUp={async () => await this.setState({draggable: !this.state.draggable,hidePopup:false})}
                             onChildMouseMove={this.onCircleInteraction}
                             onClick={this.handleMapClick}
                             draggable={this.state.draggable}
@@ -266,6 +267,7 @@ class MissionEditModal extends Component {
                         >
                             {locations && locations.map((location, index) => {
                                 return (<MyGreatPlace
+                                    hide={this.state.hidePopup}
                                     lat={location.latitude} lng={location.longitude} key={`marker-${index}`}
                                     id={index}
                                     text={index + 1}

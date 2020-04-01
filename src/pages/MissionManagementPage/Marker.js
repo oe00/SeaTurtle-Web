@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 
 import {greatPlaceStyle} from "./markerStyle.js";
-import {Image, Modal, Popup, Segment} from "semantic-ui-react";
+import {Image, Modal, Popup, Segment, SegmentGroup} from "semantic-ui-react";
 
 export default class MyGreatPlace extends Component {
 
@@ -42,12 +42,12 @@ export default class MyGreatPlace extends Component {
         } else if (text !== null && this.state.counter === 0) {
             return (
                 <div onContextMenu={() => this.props.handleRightClick(lat,lng)}>
-                <Popup hideOnScroll position="top center"
+                <Popup style={{padding:"0"}} disabled={this.props.hide} hideOnScroll position="top center"
                        trigger={<div style={greatPlaceStyle}> {text}</div>}>
-                    <Segment.Group horizontal compact>
-                        <Segment><h3>Latitude</h3>{lat.toFixed(4)}</Segment>
-                        <Segment><h3>Longitude</h3>{lng.toFixed(4)}</Segment>
-                    </Segment.Group>
+                    <Popup.Content as={SegmentGroup} style={{margin:"0"}} horizontal compact size="small">
+                        <Segment><h3>{lat.toFixed(4)}</h3>Latitude</Segment>
+                        <Segment><h3>{lng.toFixed(4)}</h3>Longitude</Segment>
+                    </Popup.Content>
                 </Popup>
                 </div>
             );

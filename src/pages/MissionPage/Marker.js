@@ -1,61 +1,59 @@
 import React from "react";
 
 import {greatPlaceStyle} from "./markerStyle.js";
-import {Image, Modal, Popup, Segment} from "semantic-ui-react";
+import {Image, Modal, Popup, Segment, SegmentGroup} from "semantic-ui-react";
 
 export default class MyGreatPlace extends React.Component {
 
-  state = { isOpen: false, counter: 0 };
+    state = {isOpen: false, counter: 0};
 
-  handleOpen = () => {
-    this.setState({ isOpen: true, counter: this.state.counter + 1 });
+    handleOpen = () => {
+        this.setState({isOpen: true, counter: this.state.counter + 1});
 
-  };
+    };
 
-  hs = () => {
-    this.setState({ isOpen: true});
+    hs = () => {
+        this.setState({isOpen: true});
 
-  };
+    };
 
-  handleClose = () => {
-    this.setState({ isOpen: false, counter: 0 });
-  };
+    handleClose = () => {
+        this.setState({isOpen: false, counter: 0});
+    };
 
-  render() {
+    render() {
 
-    let { lat, lng, picture, text } = this.props;
+        let {lat, lng, picture, text} = this.props;
 
-    if (text == null && this.state.counter===0) {
-      text = "+";
-      return (
-        <Popup
-          on='click'
-          onOpen={this.hs}
-          onClose={this.handleClose}
-          hideOnScroll
-          open={this.state.isOpen}
-          position="top center" content={`Lat:${lat} Long:${lng}`}
-          trigger={<div style={greatPlaceStyle}> {text}</div>}>
-          <Image onClick={this.handleOpen} src={picture.thumbnail}/>
-        </Popup>
-      );
-    } else if (text !== null && this.state.counter===0) {
-      return (
-        <Popup hideOnScroll size="tiny" position="top center"
-               trigger={<div style={greatPlaceStyle}> {text}</div>}>
-        <Segment.Group horizontal compact>
-          <Segment><h3>Latitude</h3>{lat.toFixed(4)}</Segment>
-          <Segment><h3>Longitude</h3>{lng.toFixed(4)}</Segment>
-        </Segment.Group>
-        </Popup>
-      );
+        if (text == null && this.state.counter === 0) {
+            text = "+";
+            return (
+                <Popup
+                    on='click'
+                    onOpen={this.hs}
+                    onClose={this.handleClose}
+                    hideOnScroll
+                    open={this.state.isOpen}
+                    position="top center" content={`Lat:${lat} Long:${lng}`}
+                    trigger={<div style={greatPlaceStyle}> {text}</div>}>
+                    <Image onClick={this.handleOpen} src={picture.thumbnail}/>
+                </Popup>
+            );
+        } else if (text !== null && this.state.counter === 0) {
+            return (
+                <Popup style={{padding: "0"}} disabled={this.props.hide} hideOnScroll position="top center"
+                       trigger={<div style={greatPlaceStyle}> {text}</div>}>
+                    <Popup.Content as={SegmentGroup} style={{margin: "0"}} horizontal compact size="small">
+                        <Segment><h3>{lat.toFixed(4)}</h3>Latitude</Segment>
+                        <Segment><h3>{lng.toFixed(4)}</h3>Longitude</Segment>
+                    </Popup.Content>
+                </Popup>
+            );
+        } else if (this.state.counter === 1) {
+            return (<Modal open={true} closeIcon onClose={this.handleClose}>
+                <Modal.Content><Image src={picture.source}/></Modal.Content>
+            </Modal>);
+        }
+
     }
-    else if(this.state.counter===1)
-    {
-      return (<Modal open={true} closeIcon onClose={this.handleClose}>
-        <Modal.Content><Image src={picture.source}/></Modal.Content>
-      </Modal>);
-    }
-
-  }
 }

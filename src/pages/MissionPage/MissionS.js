@@ -66,7 +66,7 @@ class MissionS extends Component {
 
         this.oldPath = new maps.Polygon({
             path: locs,
-            strokeColor: '#000000',
+            strokeColor: '#f44336',
             strokeOpacity: 1,
             strokeWeight: 4,
             fillOpacity: 0,
@@ -197,21 +197,21 @@ class MissionS extends Component {
         if (!mission) {
             return defaultZoom;
         }
-        let zoom = 18;
+        let zoom = 20;
 
         if (mission.distance > 1) {
             zoom = 16;
         }
         if (mission.distance > 2) {
+            zoom = 15;
+        }
+        if (mission.distance > 4) {
+            zoom = 14;
+        }
+        if (mission.distance > 8) {
             zoom = 13;
         }
-        if (mission.distance > 5) {
-            zoom = 11;
-        }
-        if (mission.distance > 10) {
-            zoom = 10;
-        }
-        return isActive ? zoom + 1.5 : zoom;
+        return isActive ? zoom + 1 : zoom;
     };
 
     updateSelected = (event, {selected, value}) => {
@@ -325,7 +325,7 @@ class MissionS extends Component {
 
         return (
             <Grid columns={2}>
-                <Grid.Column width={5}>
+                <Grid.Column width={4}>
                     {(!loading) ? (!activeMission && !resultMission) ?
                         <Dropdown fluid scrolling
                                   className="h2"
@@ -363,13 +363,14 @@ class MissionS extends Component {
                         </Card.Content>
                     </>)}
                 </Grid.Column>
-                <Grid.Column width={11}>
+                <Grid.Column width={12}>
                     <Card fluid>
                         <Container style={mapBorder}>
                             <GoogleMapReact
                                 bootstrapURLKeys={MAPS_CONFIG}
                                 center={center}
                                 zoom={zoom}
+                                options={{mapTypeControl:true,mapTypeId:"terrain"}}
                                 yesIWantToUseGoogleMapApiInternals
                                 onGoogleApiLoaded={({map,maps}) => this.passMapReference(map,maps)}
                             >

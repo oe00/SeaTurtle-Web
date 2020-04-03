@@ -99,7 +99,7 @@ class MissionS extends Component {
             .on("value", async snapshot => {
                 const activeMission = snapshot.val();
 
-                if (activeMission) {
+                if (activeMission && activeMission.mission_state!=="Finished") {
 
                     let mission = await this.getMissionDetails(activeMission.mission_ref);
 

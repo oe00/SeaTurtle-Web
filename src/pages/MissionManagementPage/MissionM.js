@@ -200,6 +200,10 @@ class MissionM extends Component {
 
         let zoom = defaultZoom;
 
+        if (mission.distance > 0) {
+            zoom = 19;
+        }
+
         if (mission.distance > 1) {
             zoom = 15;
         }

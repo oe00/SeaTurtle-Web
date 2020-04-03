@@ -18,4 +18,20 @@ const greatPlaceStyle = {
   padding: 4
 };
 
-export {greatPlaceStyle};
+const K_WIDTH_DRONE = 40;
+const K_HEIGHT_DRONE = 40;
+
+const greatPlaceStyle_DRONE = {
+  position: 'absolute',
+  width: K_WIDTH_DRONE,
+  height: K_HEIGHT_DRONE,
+  left: -K_WIDTH_DRONE / 2,
+  top: -K_HEIGHT_DRONE / 2,
+
+  border: '3px solid #3f51b5',
+  backgroundColor: 'white',
+  padding: 4
+};
+
+
+export {greatPlaceStyle,greatPlaceStyle_DRONE};

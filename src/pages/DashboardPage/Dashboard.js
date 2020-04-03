@@ -83,7 +83,7 @@ class Dashboard extends Component {
                                         <Card.Header textAlign="center"><Icon bordered size="small"
                                                                               name="play"/> Mission State</Card.Header>
                                     </Card.Content>
-                                    <Button fluid size="small" disabled color="red"> {droneStatus.mission_state}</Button>
+                                    <Button fluid size="small" disabled color="red"> {droneStatus.state}</Button>
                                 </Card>
                             </Card.Content>
                         </Card>

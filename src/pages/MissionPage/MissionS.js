@@ -7,6 +7,7 @@ import MissionCard from "./MissionCard";
 import {withFirebase} from "../../components/Firebase";
 import {MAPS_CONFIG} from "../../config";
 import DroneStatusCard from "../../components/DroneStatusCard";
+import {longitudeKeys} from "geolib/es/constants";
 
 const mapBorder = {width: "100% ", height: "80vh"};
 
@@ -24,16 +25,14 @@ class MissionS extends Component {
             missionDropDowns: [],
             locations: [],
             selectedMission: null,
-            firestoreMissionID: null,
-            selectedIndex: 0,
             zoom: defaultZoom,
             center: defaultCenter,
             activeMission: null,
-            activeMissionID: null,
             resultID: null,
             resultMission: null,
             missionCompleted: false,
             prevMissionName: null,
+            droneStatus: null,
         };
     }
 
@@ -55,54 +54,88 @@ class MissionS extends Component {
 
         let maps = this.testMapAPI;
 
-        let locs = locations.map(l => {
-            return ({lat: l.latitude, lng: l.longitude})
-        });
+        if (maps) {
+            let locs = locations.map(l => {
+                return ({lat: l.latitude, lng: l.longitude})
+            });
 
-        if (this.oldPath != null) {
-            this.oldPath.setMap(null);
+            if (this.oldPath != null) {
+                this.oldPath.setMap(null);
+            }
+
+            this.oldPath = new maps.Polygon({
+                path: locs,
+                strokeColor: '#f44336',
+                strokeOpacity: 1,
+                strokeWeight: 4,
+                fillOpacity: 0,
+                map: this.testMap,
+            });
         }
 
-        this.oldPath = new maps.Polygon({
-            path: locs,
-            strokeColor: '#f44336',
-            strokeOpacity: 1,
-            strokeWeight: 4,
-            fillOpacity: 0,
-            map: this.testMap,
-        });
-
-
     }
+
+    onListenForDroneStatus = () => {
+        this.props.firebase
+            .droneStatus()
+            .on("value", snapshot => {
+                const droneStatus = snapshot.val();
+
+                if (droneStatus) {
+                    this.setState({
+                        droneStatus: droneStatus,
+                    });
+                } else {
+                    this.setState({
+                        droneStatus: null,
+                    });
+                }
+            });
+    };
 
     onListenForActiveMission = () => {
         this.props.firebase
             .activeMission()
-            .on("value", snapshot => {
+            .on("value", async snapshot => {
                 const activeMission = snapshot.val();
-                let copyActiveMission = null;
 
                 if (activeMission) {
-                    copyActiveMission = Object.keys(activeMission).map(key => ({
-                        ...activeMission[key],
-                        uid: key,
-                    }));
+
+                    let mission = await this.getMissionDetails(activeMission.mission_ref);
+
+                    let images = [];
+                    if (activeMission["uploaded-images"]) {
+                        images = Object.keys(activeMission["uploaded-images"]).map(key => ({
+                            ...activeMission["uploaded-images"][key],
+                        }));
+                    }
+
+                    mission.state = activeMission.mission_state;
+                    mission.picturesTaken = images.length;
+
+
                     this.setState({
-                        activeMission: copyActiveMission[0],
-                        activeMissionID: copyActiveMission[0].uid,
-                        selectedMission: copyActiveMission[0].details,
-                        firestoreMissionID: copyActiveMission[0].missionRef,
-                        zoom: this.missionZoom(copyActiveMission[0].details, true),
-                        center: this.missionCenter(copyActiveMission[0].details),
+                        activeMission: mission,
+                        selectedMission: mission,
+                        center: this.missionCenter(mission),
+                        zoom: this.missionZoom(mission, true),
                     });
+
+                    this.onListenForDroneStatus();
+                    this.renderPolylines(mission.route);
+
+
                 } else {
-                    this.setState({
-                        activeMission: null,
-                        activeMissionID: null,
-                        selectedMission: null,
-                    });
-                }
-                this.onListenForMissionHistoryDatabase();
+                    if (activeMission && activeMission.mission_state === "Finished") {
+                        this.setState({
+                            activeMission: null,
+                            selectedMission: null,
+                            zoom: defaultZoom,
+                            center: defaultCenter,
+                        });
+                        this.renderPolylines([]);
+                    }
+                };
             });
     };
 
@@ -149,31 +182,12 @@ class MissionS extends Component {
         return this.props.firebase
             .mission(mid)
             .get().then(doc => {
-                return doc.data();
+                let details = doc.data();
+                if (details) {
+                    details.uid = mid;
+                    return details;
+                }
             });
-    };
-
-    onListenForMissionHistoryDatabase = () => {
-        this.props.firebase
-            .missionHistories()
-            .orderBy("loggedAt", "desc")
-            .limit(1)
-            .get().then(async snapshot => {
-            if (!snapshot.empty) {
-                const missionObject = snapshot.docs[0].data();
-                if (missionObject) {
-                    missionObject.details = await this.getMissionDetails(missionObject.missionRef);
-                }
-                if (missionObject.jobID === this.state.resultID && missionObject.results.state === "Completed") {
-                    this.setState({
-                        missionCompleted: true,
-                        resultMission: missionObject,
-                    })
-                }
-            } else {
-                this.setState({missionCompleted: false, resultMission: null})
-            }
-        })
     };
 
     missionCenter = (mission) => {
@@ -199,6 +213,10 @@ class MissionS extends Component {
 
         let zoom = defaultZoom;
 
+        if (mission.distance > 0) {
+            zoom = 19;
+        }
+
         if (mission.distance > 1) {
             zoom = 16;
         }
@@ -222,8 +240,6 @@ class MissionS extends Component {
 
         this.setState({
             selectedMission: mission,
-            firestoreMissionID: value,
-            selectedIndex: index,
             center: this.missionCenter(mission),
             zoom: this.missionZoom(mission, false),
         });
@@ -232,96 +248,54 @@ class MissionS extends Component {
 
     };
 
-    handleStartMission = () => {
-        const {selectedMission, firestoreMissionID} = this.state;
-
-        this.setState({
-            zoom: this.missionZoom(selectedMission, true),
-            center: this.missionCenter(selectedMission),
-        });
-
-        let activeMission = {
-            state: "Waiting",
-            startTime: new Date().toLocaleTimeString(),
-            details: selectedMission,
-            picturesTaken: 0,
-            progress: 0,
-            missionRef: firestoreMissionID,
-
-        };
-
-        this.props.firebase.activeMission().push(activeMission)
-            .then(ref => this.setState({activeMission: activeMission, activeMissionID: ref.key}));
-    };
-
-    handleCancelMission = () => {
-
-        let selectedMission = this.state.activeMission.details;
-
-        this.props.firebase.activeMissionEdit(this.state.activeMissionID).set(null);
-
-        this.setState({
-            selectedMission: selectedMission,
-            zoom: this.missionZoom(selectedMission, false),
-            center: this.missionCenter(selectedMission),
-        })
+    componentWillUnmount() {
+        this.props.firebase
+            .droneStatus().off();
+        this.props.firebase
+            .activeMission().off();
     }
+
+    handleStartMission = () => {
+
+        const {selectedMission} = this.state;
+
+        if (selectedMission) {
+            const waypoints = selectedMission.route.map(w => {
+                return {altitude: 10, latitude: w.latitude, longitude: w.longitude}
+            });
+
+            const activeMission = {
+                mission_ref: selectedMission.uid,
+                mission_state: "Pending",
+                waypoints
+            };
+
+            this.props.firebase.activeMission().set(activeMission);
+
+            this.setState({
+                zoom: this.missionZoom(selectedMission, true),
+                center: this.missionCenter(selectedMission),
+                activeMission: selectedMission,
+            });
+        }
+    };
 
     handleClearResults = () => {
         this.setState({
-            missionCompleted: false,
-            resultID: null,
-            resultMission: null,
             activeMission: null,
-            activeMissionID: null,
             selectedMission: null,
             zoom: defaultZoom,
             center: defaultCenter,
-            prevMissionName: null,
         });
 
         this.renderPolylines([]);
-    }
 
-    handleMockMissionFinish = () => {
-
-        let {activeMission, activeMissionID, firestoreMissionID} = this.state;
-
-        let name = activeMission.details.name;
-
-        let mockLocations = activeMission.details.route;
-
-        this.setState({prevMissionName: name});
-
-        delete activeMission.details;
-        activeMission.state = "Completed";
-        activeMission.progress = 100;
-        activeMission.picturesTaken = mockLocations.length;
-        activeMission.endTime = new Date().toLocaleTimeString();
-
-        this.setState({resultID: activeMissionID});
-
-        this.props.firebase.missionHistories().add(
-            {
-                results: activeMission,
-                jobID: activeMissionID,
-                missionRef: firestoreMissionID,
-                loggedAt: new Date(),
-                mockLocations,
-            }
-        );
-
-        this.props.firebase.activeMissionEdit(activeMissionID).update({
-            state: "Completed",
-            progress: 100
-        });
-
-        this.props.firebase.activeMissionEdit(this.state.activeMissionID).set(null);
     };
 
     render() {
 
-        const {missionCompleted, selectedMission, missionDropDowns, loading, activeMission, zoom, center, resultMission, prevMissionName} = this.state;
+        const {droneStatus, selectedMission, missionDropDowns, loading, activeMission, zoom, center, resultMission, prevMissionName} = this.state;
+
 
         return (
             <Grid columns={2}>
@@ -338,7 +312,7 @@ class MissionS extends Component {
                                   className="h2"
                                   search selection
                                   disabled
-                                  text={activeMission ? activeMission.details.name : prevMissionName}/>
+                                  text={activeMission ? activeMission.name : prevMissionName}/>
                         : (<Loader active inline="centered"/>)}
                     {!activeMission ? (selectedMission && (<>
                         <MissionCard mission={selectedMission}/>
@@ -351,17 +325,9 @@ class MissionS extends Component {
                         <DroneStatusCard/>
                         <Card.Content extra>
                             <Button.Group fluid>
-                                <Button negative onClick={this.handleCancelMission}>Cancel Mission</Button>
-                                <Button color="blue" onClick={this.handleMockMissionFinish}>Mock Mission Finish</Button>
-                            </Button.Group>
-                        </Card.Content>
-                    </>)}
-                    {missionCompleted && (<>
-                        <MissionCard resultMission mission={resultMission.results}/>
-                        <DroneStatusCard/>
-                        <Card.Content extra>
-                            <Button.Group fluid>
-                                <Button positive onClick={this.handleClearResults}>Clear Results</Button>
+                                <Button positive disabled={activeMission.state!=="Finished"}
+                                        onClick={this.handleClearResults}>Clear
+                                    Mission</Button>
                             </Button.Group>
                         </Card.Content>
                     </>)}
@@ -383,11 +349,17 @@ class MissionS extends Component {
                                         text={index + 1}
                                     />);
                                 })}
+                                {activeMission && droneStatus && <MyGreatPlace drone
+                                                                               lat={droneStatus.location.latitude}
+                                                                               lng={droneStatus.location.longitude}
+                                                                               id={"Drone Marker"}
+                                                                               text={"Drone"}
+                                />
+                                }
                                 {resultMission && resultMission.details.route.map((location, index) => {
                                     return (<MyGreatPlace2
                                         lat={location.latitude} lng={location.longitude} id={location.id}
-                                        text={index + 1} size={""}
-                                    />);
+                                        text={index + 1}/>);
                                 })}
                             </GoogleMapReact>
                         </Container>

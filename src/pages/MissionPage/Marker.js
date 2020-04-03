@@ -1,7 +1,8 @@
 import React from "react";
 
-import {greatPlaceStyle} from "./markerStyle.js";
+import {greatPlaceStyle, greatPlaceStyle_DRONE} from "./markerStyle.js";
 import {Image, Modal, Popup, Segment, SegmentGroup} from "semantic-ui-react";
+import drone_image from "../../drone.png";
 
 export default class MyGreatPlace extends React.Component {
 
@@ -23,7 +24,19 @@ export default class MyGreatPlace extends React.Component {
 
     render() {
 
-        let {lat, lng, picture, text} = this.props;
+        let {lat, lng, picture, text, drone} = this.props;
+
+        if (drone) {
+            return (
+                <Popup style={{padding: "0"}} disabled={this.props.hide} hideOnScroll position="top center"
+                       trigger={<div style={greatPlaceStyle_DRONE}><Image src={drone_image}/></div>}>
+                    <Popup.Content as={SegmentGroup} style={{margin: "0"}} horizontal compact size="small">
+                        <Segment><h3>{lat.toFixed(4)}</h3>Latitude</Segment>
+                        <Segment><h3>{lng.toFixed(4)}</h3>Longitude</Segment>
+                    </Popup.Content>
+                </Popup>
+            );
+        }
 
         if (text == null && this.state.counter === 0) {
             text = "+";

@@ -13,17 +13,8 @@ class MissionHistoryModal extends Component {
     constructor(props) {
         super(props);
 
-        let missionRoute = null;
-
-        if (this.props.mission) {
-            missionRoute = this.props.mission.mockLocations.map((item) => {
-                return {latitude: item.latitude, longitude: item.longitude}
-            });
-        }
-
         this.state = {
             mission: this.props.mission,
-            pictureLocations: missionRoute,
         };
 
     }
@@ -33,13 +24,14 @@ class MissionHistoryModal extends Component {
             return defaultCenter;
         }
 
-        let locations = mission.mockLocations;
+        let locations = mission["uploaded-images"];
 
         let long = 0;
         let lat = 0;
+
         locations.forEach(r => {
-            long += r.longitude;
-            lat += r.latitude;
+            long += r.location.longitude;
+            lat += r.location.latitude;
         });
         return {lat: lat / locations.length, lng: long / locations.length};
     };
@@ -53,6 +45,10 @@ class MissionHistoryModal extends Component {
         }
 
         let zoom = defaultZoom;
+
+        if (distance > 0) {
+            zoom = 19;
+        }
 
         if (distance > 1) {
             zoom = 16;
@@ -71,36 +67,28 @@ class MissionHistoryModal extends Component {
     };
 
     render() {
-        const {mission, pictureLocations} = this.state;
+        const {mission} = this.state;
 
-        console.log(mission)
+        const pictures = mission["uploaded-images"];
 
         return (<Grid columns={2}>
             <Grid.Column width={4}>
                 <Card fluid>
                     <Card.Content>
-                        <Segment>
-                            <h3>{mission.jobID}</h3>
-                            Job ID
-                        </Segment>
                         <Segment.Group horizontal>
                             <Segment>
                                 <h3>{mission.details.distance} KM</h3>
                                 Round Trip
                             </Segment>
-                            <Segment>
-                                <h3>{mission.results.progress}%</h3>
-                                Progress
-                            </Segment>
                         </Segment.Group>
                         <Segment.Group horizontal>
                             <Segment>
-                                <h3>{mission.results.state}</h3>
+                                <h3>{mission.mission_state}</h3>
                                 Status
                             </Segment>
                             <Segment>
                                 <h3>{mission.details.route.length}</h3>
-                                Waypoints
+                                Taken Pictures
                             </Segment>
                         </Segment.Group>
                     </Card.Content>
@@ -114,10 +102,10 @@ class MissionHistoryModal extends Component {
                             center={this.missionCenter(mission)}
                             zoom={this.missionZoom(mission)}
                         >
-                            {pictureLocations && pictureLocations.map((location, index) => {
+                            {pictures && pictures.map((p, index) => {
                                 return (<MyGreatPlace
-                                    lat={location.latitude} lng={location.longitude} id={location.id}
-                                    text={index + 1} size={"large"}
+                                    lat={p.location.latitude} lng={p.location.longitude} id={p.location.id}
+                                    imageThumb={p.thumbnail} imageSource={p.source} text={index + 1} size={"large"}
                                 />);
                             })}
                         </GoogleMapReact>

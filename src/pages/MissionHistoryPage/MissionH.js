@@ -34,18 +34,25 @@ class MissionH extends Component {
         this.setState({empty: false, missions: []});
         this.props.firebase
             .missionHistories()
-            .orderBy("loggedAt", "desc")
+            .orderBy("started_at", "desc")
             .get().then(snapshot => {
             snapshot.forEach(async doc => {
                 const missionObject = doc.data();
 
                 if (missionObject) {
+
+                    const images = Object.keys(missionObject["uploaded-images"]).map(key => ({
+                        ...missionObject["uploaded-images"][key],
+                    }));
+
+                    missionObject["uploaded-images"] = images;
+
                     const mission = {
                         ...missionObject,
                         uid: doc.id,
                     };
 
-                    mission.details = await this.getMissionDetails(mission.missionRef);
+                    mission.details = await this.getMissionDetails(mission.mission_ref);
 
                     this.setState({
                         missions: [...this.state.missions, mission],
@@ -72,9 +79,9 @@ class MissionH extends Component {
                     <Table.Header fullWidth>
                         <Table.Row>
                             <Table.HeaderCell>Name</Table.HeaderCell>
-                            <Table.HeaderCell>Start Time</Table.HeaderCell>
-                            <Table.HeaderCell>End Time</Table.HeaderCell>
-                            <Table.HeaderCell>Pictures Taken</Table.HeaderCell>
+                            <Table.HeaderCell>Started At</Table.HeaderCell>
+                            <Table.HeaderCell>State</Table.HeaderCell>
+                            <Table.HeaderCell>Taken Images</Table.HeaderCell>
                             <Table.HeaderCell>Operation</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
@@ -82,9 +89,9 @@ class MissionH extends Component {
                         {missions.map((mission, i) => (
                             <Table.Row key={i}>
                                 <Table.Cell>{mission.details.name}</Table.Cell>
-                                <Table.Cell>{mission.results.startTime} </Table.Cell>
-                                <Table.Cell>{mission.results.endTime} </Table.Cell>
-                                <Table.Cell>{mission.results.picturesTaken}</Table.Cell>
+                                <Table.Cell>{new Date(mission.started_at).toLocaleTimeString()}</Table.Cell>
+                                <Table.Cell>{mission.mission_state}</Table.Cell>
+                                <Table.Cell>{mission["uploaded-images"].length}</Table.Cell>
                                 <Table.Cell collapsing>
                                     <Modal size="fullscreen"
                                            trigger={<Button color="blue" labelPosition="right" icon="info"

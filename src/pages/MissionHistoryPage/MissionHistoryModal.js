@@ -9,7 +9,7 @@ const defaultZoom = 11;
 
 const mapBorder = {width: "100% ", height: "75vh "};
 
-class MissionResultModal extends Component {
+class MissionHistoryModal extends Component {
     constructor(props) {
         super(props);
 
@@ -73,36 +73,40 @@ class MissionResultModal extends Component {
     render() {
         const {mission, pictureLocations} = this.state;
 
+        console.log(mission)
+
         return (<Grid columns={2}>
-            <Grid.Column width={6}>
+            <Grid.Column width={4}>
                 <Card fluid>
                     <Card.Content>
                         <Segment>
-                            <h3>Mission Name</h3>
-                            {mission.details.name}
+                            <h3>{mission.jobID}</h3>
+                            Job ID
                         </Segment>
                         <Segment.Group horizontal>
                             <Segment>
-                                <h3>Round Trip</h3>
-                                {mission.details.distance} KM
+                                <h3>{mission.details.distance} KM</h3>
+                                Round Trip
                             </Segment>
                             <Segment>
-                                <h3>Progress</h3>
-                                {mission.results.progress}%
+                                <h3>{mission.results.progress}%</h3>
+                                Progress
+                            </Segment>
+                        </Segment.Group>
+                        <Segment.Group horizontal>
+                            <Segment>
+                                <h3>{mission.results.state}</h3>
+                                Status
                             </Segment>
                             <Segment>
-                                <h3>Status</h3>
-                                {mission.results.state}
-                            </Segment>
-                            <Segment>
-                                <h3>Waypoints</h3>
-                                {mission.details.route.length}
+                                <h3>{mission.details.route.length}</h3>
+                                Waypoints
                             </Segment>
                         </Segment.Group>
                     </Card.Content>
                 </Card>
             </Grid.Column>
-            <Grid.Column width={10}>
+            <Grid.Column width={12}>
                 <Card fluid>
                     <Container style={mapBorder}>
                         <GoogleMapReact
@@ -125,4 +129,4 @@ class MissionResultModal extends Component {
 }
 
 
-export default MissionResultModal;
+export default MissionHistoryModal;

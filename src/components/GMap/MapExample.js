@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {Card, Container, Form, Grid, Message, Segment} from "semantic-ui-react";
 import GoogleMapReact from "google-map-react";
-import MyGreatPlace from "./Marker";
+import MyGreatPlace from "../../pages/MissionManagementPage/Marker";
 import {getDistance} from "geolib";
 import {MAPS_CONFIG} from "../../config";
 
@@ -10,7 +10,7 @@ const defaultZoom = 11;
 
 const mapBorder = {width: "100% ", height: "75vh "};
 
-class MissionEditModal extends Component {
+class MapExample extends Component {
     constructor(props) {
         super(props);
 
@@ -108,56 +108,6 @@ class MissionEditModal extends Component {
         return zoom + 1;
     };
 
-    submitMe = () => {
-        this.setState({errorName: false, errorDistance: false});
-
-        const {mission, inputName, locations, distance} = this.state;
-
-        if (inputName.length < 1 || distance > 9.5) {
-            if (inputName.length < 1) {
-                this.setState({errorName: true});
-            }
-            if (distance > 9.5) {
-                this.setState({errorDistance: true});
-            }
-            //setTimeout(() => this.setState({errorName: false, errorDistance: false}), 2000);
-            return;
-        }
-
-        const missionRoute = locations.map((item) => {
-            return {latitude: item.latitude, longitude: item.longitude}
-        });
-
-        this.setState({submitName: this.state.inputName, open: false});
-
-        if (mission) {
-            this.props.firebase.mission(mission.uid).update(
-                {
-                    name: inputName,
-                    route: missionRoute,
-                    distance: distance,
-                    flightTime: ((distance * 1000) / 480).toFixed(0),
-                    editedBy: this.props.firebase.auth.currentUser.email,
-                    editedAt: new Date().toDateString(),
-                }).then(this.props.refresh);
-        } else {
-            this.props.firebase.missions().add(
-                {
-                    name: inputName,
-                    route: missionRoute,
-                    distance: distance,
-                    flightTime: ((distance * 1000) / 480).toFixed(0),
-                    createdAt: new Date().toDateString(),
-                    createdBy: this.props.firebase.auth.currentUser.email,
-                    editedAt: null,
-                    editedBy: null,
-                    isAllowed: true,
-                }
-            ).then(this.props.refresh);
-            this.props.modalClose();
-        }
-    };
-
     testMapAPI = null;
     testMap = null;
     oldPath = null;
@@ -210,46 +160,9 @@ class MissionEditModal extends Component {
     handleChange = (e, {value}) => this.setState({inputName: value});
 
     render() {
-        const {mission, locations, inputName, distance, errorName, errorDistance} = this.state;
+        const {mission, locations} = this.state;
 
-        return (<Grid columns={2}>
-            <Grid.Column width={6}>
-                <Card fluid>
-                    <Card.Content>
-                        {(errorName || errorDistance) && (<Message error>
-                            <Message.Header>Error</Message.Header>
-                            {errorName && <Message.Content>Please enter mission name</Message.Content>}
-                            {errorDistance && <Message.Content>Round trip must be less than 9.6 KM</Message.Content>}
-                        </Message>)}
-                        <Form onSubmit={this.submitMe}>
-                            <Segment>
-                                <h3>Mission Name</h3>
-                                <Form.Input
-                                    onChange={this.handleChange}
-                                    value={inputName}
-                                    error={errorName}
-                                />
-                            </Segment>
-                            <Segment.Group horizontal>
-                                <Segment>
-                                    <h3>Round Trip</h3>
-                                    {distance} KM
-                                </Segment>
-                                <Segment>
-                                    <h3>Flight Time</h3>
-                                    {((distance * 1000) / 480).toFixed(0)} Minutes
-                                </Segment>
-                                <Segment>
-                                    <h3>Waypoints</h3>
-                                    {locations.length}
-                                </Segment>
-                            </Segment.Group>
-                            <Form.Button content='Submit'/>
-                        </Form>
-                    </Card.Content>
-                </Card>
-            </Grid.Column>
-            <Grid.Column width={10}>
+        return (
                 <Card fluid>
                     <Container style={mapBorder}>
                         <GoogleMapReact
@@ -276,11 +189,9 @@ class MissionEditModal extends Component {
                             })}
                         </GoogleMapReact>
                     </Container>
-                </Card>
-            </Grid.Column>
-        </Grid>);
+                </Card>);
     }
 }
 
 
-export default MissionEditModal;
+export default MapExample;

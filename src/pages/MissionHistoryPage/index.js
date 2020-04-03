@@ -1,12 +1,12 @@
-import MissionR from './MissionResult';
+
 import React from 'react';
 import {compose} from 'recompose';
 
 import {withAuthorization, withEmailVerification} from '../../components/Session';
-import {Container} from "semantic-ui-react";
+import MissionH from "./MissionH";
 
 const MissionResults = () => (
-        <MissionR/>
+        <MissionH/>
 );
 
 const condition = authUser => (authUser === null ? false : authUser);

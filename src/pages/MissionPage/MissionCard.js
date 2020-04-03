@@ -22,16 +22,16 @@ function MissionCard(props) {
                             </Segment>
                             <Segment.Group horizontal>
                                 <Segment>
-                                    <h3>Way Points</h3>
-                                    {mission.route.length}
+                                    <h3>{mission.route.length}</h3>
+                                    Way Points
                                 </Segment>
                                 <Segment>
-                                    <h3>Flight Time</h3>
-                                    {mission.flightTime} Minutes
+                                    <h3> {mission.flightTime} Minutes</h3>
+                                    Flight Time
                                 </Segment>
                                 <Segment>
-                                    <h3>Round Trip</h3>
-                                    {mission.distance} KM
+                                    <h3> {mission.distance} KM</h3>
+                                    Round Trip
                                 </Segment>
                             </Segment.Group>
                         </Segment.Group>
@@ -62,12 +62,12 @@ function MissionCard(props) {
                 <Card.Description>
                     <Segment.Group horizontal>
                         <Segment>
-                            <h3>Progress</h3>
-                            {mission.progress}%
+                            <h3>{mission.progress}%</h3>
+                            Progress
                         </Segment>
                         <Segment>
-                            <h3>Status</h3>
-                            {mission.state}
+                            <h3>{mission.state}</h3>
+                            Status
                         </Segment>
                     </Segment.Group>
                     <Segment.Group>
@@ -76,27 +76,27 @@ function MissionCard(props) {
                         </Segment>
                         <Segment.Group horizontal>
                             <Segment>
-                                <h3>Way Points</h3>
-                                {mission.details.route.length}
+                                <h3>{mission.details.route.length}</h3>
+                                Way Points
                             </Segment>
                             <Segment>
-                                <h3>Flight Time</h3>
-                                {mission.details.flightTime} Minutes
+                                <h3>{mission.details.flightTime} Minutes</h3>
+                                Flight Time
                             </Segment>
                             <Segment>
-                                <h3>Round Trip</h3>
-                                {mission.details.distance} KM
+                                <h3>{mission.details.distance} KM</h3>
+                                Round Trip
                             </Segment>
                         </Segment.Group>
                     </Segment.Group>
                     <Segment.Group horizontal>
                         <Segment>
-                            <h3>Pictures Taken</h3>
-                            {mission.picturesTaken}
+                            <h3>{mission.picturesTaken}</h3>
+                            Pictures Taken
                         </Segment>
                         <Segment>
-                            <h3>ETA</h3>
-                            {"5 Minutes"}
+                            <h3>{mission.details.flightTime} Minutes</h3>
+                            ETA
                         </Segment>
                     </Segment.Group>
                 </Card.Description>

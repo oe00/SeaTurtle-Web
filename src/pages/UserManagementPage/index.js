@@ -5,7 +5,6 @@ import {withAuthorization, withEmailVerification} from '../../components/Session
 
 import * as ROLES from "../../constants/roles";
 import UserList from "./UserList";
-import {Container} from "semantic-ui-react";
 
 const UserManagement = () => (
         <UserList/>

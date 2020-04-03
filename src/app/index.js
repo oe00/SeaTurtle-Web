@@ -16,7 +16,7 @@ import * as ROUTES from "../constants/routes";
 import {withAuthentication} from "../components/Session";
 
 import {Container} from "semantic-ui-react";
-import MissionResults from "../pages/MissionResultsPage";
+import MissionResults from "../pages/MissionHistoryPage";
 
 //<Route render={() => <Redirect to={{pathname: ROUTES.HOME}} />} />
 
@@ -28,7 +28,7 @@ const App = () => (
                 <Route exact path={ROUTES.HOME} component={Home}/>
                 <Route exact path={ROUTES.FIRST_DEMO} component={Demo}/>
                 <Route exact path={ROUTES.MISSION} component={MissionSelection}/>
-                <Route exact path={ROUTES.MISSION_RESULTS} component={MissionResults}/>
+                <Route exact path={ROUTES.MISSION_HISTORY} component={MissionResults}/>
                 <Route exact path={ROUTES.SIGN_IN} component={SignInPage}/>
                 <Route exact path={ROUTES.SIGN_UP} component={SignUpPage}/>
                 <Route

@@ -4,18 +4,12 @@ import {compose} from "recompose";
 import {withAuthorization, withEmailVerification} from "../../components/Session";
 import Dashboard from "./Dashboard";
 
-/**
- *
- */
 
 const Home = () => (
-    <div>
-        <h1>Dashboard</h1>
-        <Dashboard/>
-    </div>
+    <Dashboard/>
 );
 
-const condition = authUser => (authUser===null ? false : authUser);
+const condition = authUser => (authUser === null ? false : authUser);
 
 export default compose(
     withEmailVerification,

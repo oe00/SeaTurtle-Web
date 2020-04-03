@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {Button, Card, Container, Dropdown, Grid, Loader} from "semantic-ui-react";
 import GoogleMapReact from "google-map-react";
 import MyGreatPlace from "./Marker";
-import MyGreatPlace2 from "../MissionResultsPage/Marker";
+import MyGreatPlace2 from "../MissionHistoryPage/Marker";
 import MissionCard from "./MissionCard";
 import {withFirebase} from "../../components/Firebase";
 import {MAPS_CONFIG} from "../../config";
@@ -53,8 +53,6 @@ class MissionS extends Component {
     renderPolylines(locations) {
 
         let maps = this.testMapAPI;
-
-        console.log(locations)
 
         let locs = locations.map(l => {
             return ({lat: l.latitude, lng: l.longitude})

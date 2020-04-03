@@ -13,13 +13,13 @@ const Navigation = () => {
 
     let i = null;
     switch (window.location.pathname.toString()) {
-        case "/":
+        case "/" || "":
             i = 1;
             break;
         case "/mission":
             i = 2;
             break;
-        case "/mission-results":
+        case "/mission-history":
             i = 3;
             break;
         case "/mission-management":
@@ -48,8 +48,8 @@ const Navigation = () => {
                                        to={ROUTES.HOME}/>
                             <Menu.Item onClick={() => setIndex(2)} active={index === 2} name="Mission" as={Link}
                                        to={ROUTES.MISSION}/>
-                            <Menu.Item onClick={() => setIndex(3)} active={index === 3} name="Mission Results" as={Link}
-                                       to={ROUTES.MISSION_RESULTS}/>
+                            <Menu.Item onClick={() => setIndex(3)} active={index === 3} name="Mission History" as={Link}
+                                       to={ROUTES.MISSION_HISTORY}/>
                             {(authUser.role === ROLES.EXPERT || authUser.role === ROLES.ADMIN) && (
                                 <Menu.Item onClick={() => setIndex(4)} active={index === 4} name="Mission Management"
                                            as={Link} to={ROUTES.MISSION_MANAGEMENT}/>

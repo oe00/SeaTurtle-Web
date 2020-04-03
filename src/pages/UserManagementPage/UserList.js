@@ -3,14 +3,15 @@ import React, {Component} from "react";
 import {withFirebase} from "../../components/Firebase";
 
 
-import {Card, Dropdown, Loader, Table} from "semantic-ui-react";
+import {Card, Dropdown, Icon, Loader, Message, Table} from "semantic-ui-react";
+import Loading from "../../components/Loading";
 
 class UserList extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            loading: false,
+            empty: false,
             users: [],
             userDropdownOptions: [{key: 1, text: "Admin", value: "Admin"},
                 {key: 2, text: "Expert", value: "Expert"},
@@ -21,7 +22,7 @@ class UserList extends Component {
     }
 
     onListenForDatabase = () => {
-        this.setState({loading: true, users: []});
+        this.setState({empty: false, users: []});
         this.props.firebase
             .users()
             .get().then(snapshot => {
@@ -39,10 +40,11 @@ class UserList extends Component {
                         loading: false,
                     });
 
-                } else {
-                    this.setState({users: null, loading: false});
                 }
-            })
+            });
+            if (snapshot.empty) {
+                this.setState({loading: false, empty: true});
+            }
         });
 
     };
@@ -60,11 +62,9 @@ class UserList extends Component {
 
 
     render() {
-        const {users, loading, userDropdownOptions} = this.state;
+        const {users, userDropdownOptions, empty} = this.state;
 
-        return (loading ? (
-                <Loader active inline/>
-            ) : (
+        return (users.length > 0 ? (
                 <Card fluid>
                     <Card.Content>
                         <Table celled compact>
@@ -92,7 +92,17 @@ class UserList extends Component {
                         </Table>
                     </Card.Content>
                 </Card>
-            )
+            ) : empty ?
+                <Message info icon>
+                    <Icon name='warning sign'/>
+                    <Message.Content>
+                        <Message.Header>No Results.</Message.Header>
+                        Please add a user first.
+                    </Message.Content>
+                </Message>
+                :
+                <Loading size={100}/>
+
         )
             ;
     }

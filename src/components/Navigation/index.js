@@ -68,7 +68,7 @@ const Navigation = () => {
                 ) : (
                     <Menu size="huge" widths={1}>
                         <Container fluid>
-                            <Menu.Item name="SeaTurtle Web Login" as={Link} to={ROUTES.HOME}/>
+                            <Menu.Item name="SeaTurtle Web" as={Link} to={ROUTES.HOME}/>
                         </Container>
                     </Menu>
                 )

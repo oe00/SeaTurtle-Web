@@ -3,6 +3,8 @@ import React, {Component} from "react";
 import {withFirebase} from "../../components/Firebase";
 
 import {Button, Card, Grid, Icon,} from "semantic-ui-react";
+import Loading from "../../components/Loading";
+import DroneStatusCard from "../../components/DroneStatusCard";
 
 
 class Dashboard extends Component {
@@ -12,85 +14,83 @@ class Dashboard extends Component {
 
         this.state = {
             loading: false,
-            commands: [],
+            droneStatus: null,
         };
     }
 
     componentDidMount() {
-        this.onListenForCommands();
+        this.onListenForDroneStatus();
     }
 
-    onListenForCommands = () => {
-        this.setState({loading: true});
-
+    onListenForDroneStatus = () => {
         this.props.firebase
-            .commandQueue()
-            .orderByChild("createdAt")
+            .droneStatus()
             .on("value", snapshot => {
-                const commandObject = snapshot.val();
+                const droneStatus = snapshot.val();
 
-                if (commandObject) {
-                    const commandList = Object.keys(commandObject).map(key => ({
-                        ...commandObject[key],
-                        uid: key,
-                    }));
+                if (droneStatus) {
 
                     this.setState({
-                        commands: commandList.reverse(),
-                        loading: false,
+                        droneStatus: droneStatus,
                     });
-
                 } else {
-                    this.setState({commands: null, loading: false});
+                    this.setState({
+                        droneStatus: null,
+                    });
                 }
             });
-
     };
 
+
     render() {
+
+        const {droneStatus} = this.state;
+
         return (
             <Grid>
-                <Grid.Column width={3}>
-                    <Card fluid>
-                        <Card.Content>
-                            <Card.Header>
-                                <h2>Drone Status</h2>
-                            </Card.Header>
-                            <Card fluid>
-                                <Card.Content>
-                                    <Card.Header textAlign="center">
-                                        <Icon bordered size="small" name="wifi"/>
-                                        Connection Status</Card.Header>
-                                </Card.Content>
-                                <Button fluid size="small" disabled color="green"> Active</Button>
-                            </Card>
-                            <Card fluid>
-                                <Card.Content>
-                                    <Card.Header textAlign="center"><Icon bordered size="small"
-                                                                          name="battery full"/> Remaining
-                                        Battery</Card.Header>
-                                </Card.Content>
-                                <Button fluid size="small" color="grey" disabled> {"90%"}</Button>
-                            </Card>
-                            <Card fluid>
-                                <Card.Content>
-                                    <Card.Header textAlign="center"><Icon bordered size="small"
-                                                                          name="hdd"/> Remaining
-                                        Storage</Card.Header>
-                                </Card.Content>
-                                <Button fluid size="small" disabled color="blue"> {"15 GB"}</Button>
-                            </Card>
-                            <Card fluid>
-                                <Card.Content>
-                                    <Card.Header textAlign="center"><Icon bordered size="small"
-                                                                          name="play"/> Mission Status</Card.Header>
-                                </Card.Content>
-                                <Button fluid size="small" disabled color="red"> {"Not Running"}</Button>
-                            </Card>
-                        </Card.Content>
-                    </Card>
+                <Grid.Row><Grid.Column width={4}>
+                    {droneStatus ? <Card fluid>
+                            <Card.Content>
+                                <Card.Header>
+                                    <h2>Drone Status</h2>
+                                </Card.Header>
+                                <Card fluid>
+                                    <Card.Content>
+                                        <Card.Header textAlign="center">
+                                            <Icon bordered size="small" name="wifi"/>
+                                            Connection Status</Card.Header>
+                                    </Card.Content>
+                                    <Button fluid size="small" disabled color="green"> Active</Button>
+                                </Card>
+                                <Card fluid>
+                                    <Card.Content>
+                                        <Card.Header textAlign="center"><Icon bordered size="small"
+                                                                              name="battery full"/> Remaining
+                                            Battery</Card.Header>
+                                    </Card.Content>
+                                    <Button fluid size="small" color="grey" disabled> {droneStatus.battery}%</Button>
+                                </Card>
+                                {/**<Card fluid>
+                                    <Card.Content>
+                                        <Card.Header textAlign="center"><Icon bordered size="small"
+                                                                              name="hdd"/> Remaining
+                                            Storage</Card.Header>
+                                    </Card.Content>
+                                    <Button fluid size="small" disabled color="blue"> {"15 GB"}</Button>
+                                </Card>*/}
+                                <Card fluid>
+                                    <Card.Content>
+                                        <Card.Header textAlign="center"><Icon bordered size="small"
+                                                                              name="play"/> Mission State</Card.Header>
+                                    </Card.Content>
+                                    <Button fluid size="small" disabled color="red"> {droneStatus.mission_state}</Button>
+                                </Card>
+                            </Card.Content>
+                        </Card>
+                        :
+                        <Loading size={100}/>}
                 </Grid.Column>
-                <Grid.Column width={3}>
+                <Grid.Column width={4}>
                     <Card fluid>
                         <Card.Content>
                             <Card.Header>
@@ -104,32 +104,15 @@ class Dashboard extends Component {
                                 </Card.Content>
                                 <Button fluid size="small" disabled color="green"> Active</Button>
                             </Card>
-                            <Card fluid>
-                                <Card.Content>
-                                    <Card.Header textAlign="center"><Icon bordered size="small"
-                                                                          name="battery full"/> Remaining
-                                        Battery</Card.Header>
-                                </Card.Content>
-                                <Button fluid size="small" color="grey" disabled> {"90%"}</Button>
-                            </Card>
-                            <Card fluid>
-                                <Card.Content>
-                                    <Card.Header textAlign="center"><Icon bordered size="small"
-                                                                          name="hdd"/> Remaining
-                                        Storage</Card.Header>
-                                </Card.Content>
-                                <Button fluid size="small" disabled color="blue"> {"15 GB"}</Button>
-                            </Card>
-                            <Card fluid>
-                                <Card.Content>
-                                    <Card.Header textAlign="center"><Icon bordered size="small"
-                                                                          name="play"/> Mission Status</Card.Header>
-                                </Card.Content>
-                                <Button fluid size="small" disabled color="red"> {"Not Running"}</Button>
-                            </Card>
                         </Card.Content>
                     </Card>
                 </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                    <Grid.Column width={4}>
+                        <DroneStatusCard/>
+                    </Grid.Column>
+                </Grid.Row>
             </Grid>
         )
     };

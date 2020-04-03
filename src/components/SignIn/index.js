@@ -6,15 +6,14 @@ import {PasswordForgetLink} from '../PasswordForget';
 import {withFirebase} from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
-import {Button, Container, Form, Grid, Header, Image, Message,} from "semantic-ui-react";
+import {Button, Form, Grid, Header, Image, Message,} from "semantic-ui-react";
 
 import turtle from "../../turtle.jpg";
 
 const SignInPage = () => (
-  <Container fluid>
     <Grid column={2}>
     <Grid.Column width={12}>
-      <Image src={turtle} fluid rounded/>
+      <Image ui src={turtle} fluid rounded/>
     </Grid.Column>
     <Grid.Column width={4}>
       <Grid.Row verticalAlign="bottom"/>
@@ -25,7 +24,6 @@ const SignInPage = () => (
       {/*<SignUpLink />*/}
     </Grid.Column>
     </Grid>
-  </Container>
 );
 
 const INITIAL_STATE = {

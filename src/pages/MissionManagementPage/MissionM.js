@@ -423,6 +423,19 @@ class MissionM extends Component {
                                                 Waypoints
                                             </Segment>
                                         </Segment.Group>
+
+                                        <Segment.Group horizontal>
+                                            <Segment>
+                                                <h3 style={{marginBottom:"5px"}}>Created</h3>
+                                                {mission && mission.createdBy ? mission.createdBy : "None"}<br/>
+                                                {mission && mission.createdAt ? mission.createdAt : "None"}<br/>
+                                            </Segment>
+                                            <Segment>
+                                                <h3 style={{marginBottom:"5px"}}>Edited</h3>
+                                                {mission && mission.editedBy ? mission.editedBy : "None"}<br/>
+                                                {mission && mission.editedAt ? mission.editedAt : "None"}<br/>
+                                            </Segment>
+                                        </Segment.Group>
                                         <Form.Button fluid primary
                                                      content={newMission ? "Add New Mission" : 'Update Mission'}/>
                                     </Form>

@@ -1,11 +1,12 @@
 import React, {Component} from "react";
-import {Button, Card, Container, Dropdown, Grid, Loader} from "semantic-ui-react";
+import {Button, Card, Container, Dropdown, Grid, Loader, Segment} from "semantic-ui-react";
 import GoogleMapReact from "google-map-react";
 import MyGreatPlace from "./Marker";
 import MyGreatPlace2 from "../MissionHistoryPage/Marker";
 import MissionCard from "./MissionCard";
 import {withFirebase} from "../../components/Firebase";
 import {MAPS_CONFIG} from "../../config";
+import DroneStatusCard from "../../components/DroneStatusCard";
 
 const mapBorder = {width: "100% ", height: "80vh"};
 
@@ -58,7 +59,7 @@ class MissionS extends Component {
             return ({lat: l.latitude, lng: l.longitude})
         });
 
-        if(this.oldPath!=null){
+        if (this.oldPath != null) {
             this.oldPath.setMap(null);
         }
 
@@ -188,7 +189,7 @@ class MissionS extends Component {
             lat += r.latitude;
         });
         return {lat: lat / mission.route.length, lng: long / mission.route.length};
-    }
+    };
 
     missionZoom = (mission, isActive) => {
 
@@ -232,7 +233,7 @@ class MissionS extends Component {
     };
 
     handleStartMission = () => {
-        const {selectedMission,firestoreMissionID} = this.state;
+        const {selectedMission, firestoreMissionID} = this.state;
 
         this.setState({
             zoom: this.missionZoom(selectedMission, true),
@@ -277,7 +278,7 @@ class MissionS extends Component {
             zoom: defaultZoom,
             center: defaultCenter,
             prevMissionName: null,
-        })
+        });
 
         this.renderPolylines([]);
     }
@@ -316,7 +317,7 @@ class MissionS extends Component {
         });
 
         this.props.firebase.activeMissionEdit(this.state.activeMissionID).set(null);
-    }
+    };
 
     render() {
 
@@ -341,11 +342,13 @@ class MissionS extends Component {
                         : (<Loader active inline="centered"/>)}
                     {!activeMission ? (selectedMission && (<>
                         <MissionCard mission={selectedMission}/>
+                        <DroneStatusCard/>
                         <Card.Content extra>
                             <Button fluid positive onClick={this.handleStartMission}>Start Mission</Button>
                         </Card.Content>
                     </>)) : (activeMission && <>
                         <MissionCard activeMission mission={activeMission}/>
+                        <DroneStatusCard/>
                         <Card.Content extra>
                             <Button.Group fluid>
                                 <Button negative onClick={this.handleCancelMission}>Cancel Mission</Button>
@@ -355,6 +358,7 @@ class MissionS extends Component {
                     </>)}
                     {missionCompleted && (<>
                         <MissionCard resultMission mission={resultMission.results}/>
+                        <DroneStatusCard/>
                         <Card.Content extra>
                             <Button.Group fluid>
                                 <Button positive onClick={this.handleClearResults}>Clear Results</Button>
@@ -369,9 +373,9 @@ class MissionS extends Component {
                                 bootstrapURLKeys={MAPS_CONFIG}
                                 center={center}
                                 zoom={zoom}
-                                options={{mapTypeControl:true,mapTypeId:"terrain"}}
+                                options={{mapTypeControl: true, mapTypeId: "terrain"}}
                                 yesIWantToUseGoogleMapApiInternals
-                                onGoogleApiLoaded={({map,maps}) => this.passMapReference(map,maps)}
+                                onGoogleApiLoaded={({map, maps}) => this.passMapReference(map, maps)}
                             >
                                 {selectedMission && selectedMission.route.map((location, index) => {
                                     return (<MyGreatPlace

@@ -17,9 +17,6 @@ function MissionCard(props) {
                 <Card.Content>
                     <Card.Description>
                         <Segment.Group>
-                            <Segment>
-                                <h3>Route</h3>
-                            </Segment>
                             <Segment.Group horizontal>
                                 <Segment>
                                     <h3>{mission.route.length}</h3>
@@ -34,18 +31,6 @@ function MissionCard(props) {
                                     Round Trip
                                 </Segment>
                             </Segment.Group>
-                        </Segment.Group>
-                        <Segment.Group horizontal>
-                            <Segment>
-                                <h3>Created</h3>
-                                {mission.createdBy}<br/>
-                                {mission.createdAt}<br/>
-                            </Segment>
-                            <Segment>
-                                <h3>Edited</h3>
-                                {mission.editedBy ? mission.editedBy : "None"}<br/>
-                                {mission.editedAt ? mission.editedAt : "None"}<br/>
-                            </Segment>
                         </Segment.Group>
                     </Card.Description>
                 </Card.Content>
@@ -71,9 +56,6 @@ function MissionCard(props) {
                         </Segment>
                     </Segment.Group>
                     <Segment.Group>
-                        <Segment>
-                            <h3>Route</h3>
-                        </Segment>
                         <Segment.Group horizontal>
                             <Segment>
                                 <h3>{mission.details.route.length}</h3>
@@ -134,7 +116,8 @@ function MissionCard(props) {
                 </Card.Description>
             </Card.Content>
         </Card.Content>
-    </Card>));
+    </Card>
+    ));
 }
 
 export default MissionCard;

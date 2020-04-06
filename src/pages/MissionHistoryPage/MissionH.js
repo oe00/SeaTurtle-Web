@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 
 
-import {Button, Card, Icon, Loader, Message, Modal, Table} from "semantic-ui-react";
+import {Button, Card, Icon, Loader, Message, Modal, Tab, Table} from "semantic-ui-react";
 import MissionHistoryModal from "./MissionHistoryModal";
 import {withFirebase} from "../../components/Firebase";
 import Loading from "../../components/Loading";
@@ -9,7 +9,6 @@ import Loading from "../../components/Loading";
 class MissionH extends Component {
     constructor(props) {
         super(props);
-        this.deleteMission = this.deleteMission.bind(this);
 
         this.state = {
             missions: [],
@@ -17,10 +16,6 @@ class MissionH extends Component {
         }
     }
 
-
-    deleteMission = (mission) => {
-        this.props.firebase.missionHistory(mission.uid).delete().then(this.onListenForMissionHistoriesDatabase());
-    };
 
     getMissionDetails = (mid) => {
         return this.props.firebase
@@ -39,7 +34,7 @@ class MissionH extends Component {
             snapshot.forEach(async doc => {
                 const missionObject = doc.data();
 
-                if (missionObject) {
+                if (missionObject && missionObject["uploaded-images"]) {
 
                     const images = Object.keys(missionObject["uploaded-images"]).map(key => ({
                         ...missionObject["uploaded-images"][key],
@@ -75,43 +70,20 @@ class MissionH extends Component {
 
         return (
             missions.length > 0 ?
-                <Table celled compact>
-                    <Table.Header fullWidth>
-                        <Table.Row>
-                            <Table.HeaderCell>Name</Table.HeaderCell>
-                            <Table.HeaderCell>Started At</Table.HeaderCell>
-                            <Table.HeaderCell>State</Table.HeaderCell>
-                            <Table.HeaderCell>Taken Images</Table.HeaderCell>
-                            <Table.HeaderCell>Operation</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {missions.map((mission, i) => (
-                            <Table.Row key={i}>
-                                <Table.Cell>{mission.details.name}</Table.Cell>
-                                <Table.Cell>{new Date(mission.started_at).toLocaleTimeString()}</Table.Cell>
-                                <Table.Cell>{mission.mission_state}</Table.Cell>
-                                <Table.Cell>{mission["uploaded-images"].length}</Table.Cell>
-                                <Table.Cell collapsing>
-                                    <Modal size="fullscreen"
-                                           trigger={<Button color="blue" labelPosition="right" icon="info"
-                                                            content="View"/>}
-                                           closeIcon>
-                                        <Modal.Header>
-                                            Mission Result - {mission.details.name}
-                                        </Modal.Header>
-                                        <Modal.Content>
-                                            <MissionHistoryModal mission={mission}/>
-                                        </Modal.Content>
-                                    </Modal>
-                                    <Button color="red" icon="delete" labelPosition="right" content="Delete"
-                                            onClick={() => this.deleteMission(mission)}/>
-                                </Table.Cell>
-                            </Table.Row>
-                        ))
-                        }
-                    </Table.Body>
-                </Table>
+                <Tab
+                    grid={{paneWidth: 14, tabWidth: 2}}
+                    menu={{vertical: true, fluid: true}}
+                    menuPosition='left'
+                    panes={missions.map((mission, index) => {
+                        return ({
+                            menuItem: `${mission.details.name}`,
+                            render: () =>
+                                <Tab.Pane key={"active-" + index}>
+                                    <MissionHistoryModal mission={mission} refresh={() => this.onListenForMissionHistoriesDatabase()}/>
+                                </Tab.Pane>
+                        })
+                    })}
+                />
                 : empty ? <Message info icon>
                     <Icon name='warning sign'/>
                     <Message.Content>

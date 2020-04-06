@@ -13,6 +13,7 @@ import {
     Segment
 } from "semantic-ui-react";
 import GoogleMapReact from "google-map-react";
+// should be from ./Marker
 import MyGreatPlace from "./Marker";
 import {withFirebase} from "../../components/Firebase";
 import {MAPS_CONFIG} from "../../config";
@@ -21,8 +22,10 @@ import Loading from "../../components/Loading";
 
 const mapBorder = {width: "100% ", height: "80vh"};
 
-const defaultCenter = {lat: 35.197970240448015, lng: 33.532330183981806};
-const defaultZoom = 9;
+//{lat: 35.197970240448015, lng: 33.532330183981806};
+const defaultCenter = {lat:-35.3631,lng:149.1653};
+//9
+const defaultZoom = 19;
 
 const initState = {
     loading: false,
@@ -40,7 +43,9 @@ const initState = {
     updated: false,
     newMission: false,
     inputName: "",
-    added: false
+    added: false,
+    // delete drone
+    droneStatus: null,
 };
 
 class MissionM extends Component {
@@ -73,7 +78,28 @@ class MissionM extends Component {
 
     componentDidMount() {
         this.onListenForMissionsDatabase();
+        // delete drone
+        this.onListenForDroneStatus();
     }
+
+    // delete drone
+    onListenForDroneStatus = () => {
+        this.props.firebase
+            .droneStatus()
+            .on("value", snapshot => {
+                const droneStatus = snapshot.val();
+
+                if (droneStatus) {
+                    this.setState({
+                        droneStatus: droneStatus,
+                    });
+                } else {
+                    this.setState({
+                        droneStatus: null,
+                    });
+                }
+            });
+    };
 
     testMapAPI = null;
     testMap = null;
@@ -360,8 +386,8 @@ class MissionM extends Component {
     };
 
     render() {
-
-        const {mission, locations, missionDropDowns, loading, newMission} = this.state;
+        // delete drone
+        const {droneStatus,mission, locations, missionDropDowns, loading, newMission} = this.state;
         const {updated, inputName, distance, errorName, errorDistance, added} = this.state;
         return (
             <Grid columns={2}>
@@ -494,6 +520,14 @@ class MissionM extends Component {
                                         handleRightClick={this.handleChildClick}
                                     />);
                                 })}
+                                {/** delete drone*/}
+                                {droneStatus && <MyGreatPlace drone
+                                                              lat={droneStatus.location.latitude}
+                                                              lng={droneStatus.location.longitude}
+                                                              id={"Drone Marker"}
+                                                              text={"Drone"}
+                                />
+                                }
                             </GoogleMapReact>
                         </Container>
                     </Card>

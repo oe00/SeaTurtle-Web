@@ -28,11 +28,8 @@ const Navigation = () => {
         case "/user-management":
             i = 5;
             break;
-        case "/first-demo":
-            i = 6;
-            break;
         case"/account":
-            i = 7;
+            i = 6;
             break;
     }
 
@@ -42,7 +39,7 @@ const Navigation = () => {
         <AuthUserContext.Consumer>
             {authUser =>
                 authUser ? (
-                    <Menu size="huge" widths={8}>
+                    <Menu size="huge" widths={7}>
                         <Container fluid>
                             <Menu.Item onClick={() => setIndex(1)} active={index === 1} name="Dashboard" as={Link}
                                        to={ROUTES.HOME}/>
@@ -57,10 +54,7 @@ const Navigation = () => {
                             {authUser.role === ROLES.ADMIN && (
                                 <Menu.Item onClick={() => setIndex(5)} active={index === 5} name="User Management"
                                            as={Link} to={ROUTES.USER_MANAGEMENT}/>)}
-                            <Menu.Item onClick={() => setIndex(6)} active={index === 6} name="First Demo" as={Link}
-                                       to={ROUTES.FIRST_DEMO}/>
-
-                            <Menu.Item onClick={() => setIndex(7)} active={index === 7} name="Account" as={Link}
+                            <Menu.Item onClick={() => setIndex(6)} active={index === 6} name="Account" as={Link}
                                        to={ROUTES.ACCOUNT}/>
                             <SignOutButton/>
                         </Container>

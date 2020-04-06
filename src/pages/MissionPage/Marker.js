@@ -26,7 +26,33 @@ export default class MyGreatPlace extends React.Component {
 
         let {lat, lng, picture, text, drone} = this.props;
 
-        if (drone) {
+        let {imageThumb, imageSource, size} = this.props;
+
+
+        if (picture) {
+            if (this.state.counter === 0) {
+                return (
+                    <Popup
+                        on='click'
+                        onOpen={this.hs}
+                        onClose={this.handleClose}
+                        hideOnScroll
+                        open={this.state.isOpen}
+                        position="bottom center"
+                        trigger={<div style={greatPlaceStyle_DRONE}> {text}</div>}>
+                        <Image onClick={this.handleOpen} src={imageThumb}/>
+                    </Popup>
+                );
+            } else if (this.state.counter === 1) {
+                return (<Modal size={size} open={true} closeIcon onClose={this.handleClose}>
+                    <Modal.Content><Image src={imageSource}/></Modal.Content>
+                </Modal>);
+            }
+
+
+        }
+
+        else if (drone) {
             return (
                 <Popup style={{padding: "0"}} disabled={this.props.hide} hideOnScroll position="top center"
                        trigger={<div style={greatPlaceStyle_DRONE}><Image src={drone_image}/></div>}>
@@ -38,21 +64,7 @@ export default class MyGreatPlace extends React.Component {
             );
         }
 
-        if (text == null && this.state.counter === 0) {
-            text = "+";
-            return (
-                <Popup
-                    on='click'
-                    onOpen={this.hs}
-                    onClose={this.handleClose}
-                    hideOnScroll
-                    open={this.state.isOpen}
-                    position="top center" content={`Lat:${lat} Long:${lng}`}
-                    trigger={<div style={greatPlaceStyle}> {text}</div>}>
-                    <Image onClick={this.handleOpen} src={picture.thumbnail}/>
-                </Popup>
-            );
-        } else if (text !== null && this.state.counter === 0) {
+        else if (text !== null && this.state.counter === 0) {
             return (
                 <Popup style={{padding: "0"}} disabled={this.props.hide} hideOnScroll position="top center"
                        trigger={<div style={greatPlaceStyle}> {text}</div>}>
@@ -62,10 +74,6 @@ export default class MyGreatPlace extends React.Component {
                     </Popup.Content>
                 </Popup>
             );
-        } else if (this.state.counter === 1) {
-            return (<Modal open={true} closeIcon onClose={this.handleClose}>
-                <Modal.Content><Image src={picture.source}/></Modal.Content>
-            </Modal>);
         }
 
     }

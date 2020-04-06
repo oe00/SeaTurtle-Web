@@ -1,13 +1,11 @@
 import React, {Component} from "react";
-import {Button, Card, Container, Dropdown, Grid, Loader, Segment} from "semantic-ui-react";
+import {Button, Card, Container, Dropdown, Grid, Loader} from "semantic-ui-react";
 import GoogleMapReact from "google-map-react";
 import MyGreatPlace from "./Marker";
-import MyGreatPlace2 from "../MissionHistoryPage/Marker";
 import MissionCard from "./MissionCard";
 import {withFirebase} from "../../components/Firebase";
 import {MAPS_CONFIG} from "../../config";
 import DroneStatusCard from "../../components/DroneStatusCard";
-import {longitudeKeys} from "geolib/es/constants";
 
 const mapBorder = {width: "100% ", height: "80vh"};
 
@@ -28,17 +26,17 @@ class MissionS extends Component {
             zoom: defaultZoom,
             center: defaultCenter,
             activeMission: null,
-            resultID: null,
             resultMission: null,
-            missionCompleted: false,
-            prevMissionName: null,
             droneStatus: null,
+            last_online: 0,
         };
     }
 
     componentDidMount() {
         this.onListenForMissionsDatabase();
         this.onListenForActiveMission();
+        this.onListenForPiStatus();
+        this.onListenForDroneStatus();
     }
 
     testMapAPI = null;
@@ -81,6 +79,8 @@ class MissionS extends Component {
             .on("value", snapshot => {
                 const droneStatus = snapshot.val();
 
+                droneStatus.status = new Date() - this.state.last_online < 5500;
+
                 if (droneStatus) {
                     this.setState({
                         droneStatus: droneStatus,
@@ -93,13 +93,31 @@ class MissionS extends Component {
             });
     };
 
+    onListenForPiStatus = () => {
+        this.props.firebase
+            .piStatus()
+            .on("value", snapshot => {
+                const piStatus = snapshot.val();
+
+                if (piStatus) {
+                    this.setState({
+                        last_online: piStatus.last_online,
+                    });
+                } else {
+                    this.setState({
+                        last_online: 0,
+                    });
+                }
+            });
+    };
+
     onListenForActiveMission = () => {
         this.props.firebase
             .activeMission()
             .on("value", async snapshot => {
                 const activeMission = snapshot.val();
 
-                if (activeMission && activeMission.mission_state!=="Finished") {
+                if (activeMission && activeMission.mission_state !== "Finished") {
 
                     let mission = await this.getMissionDetails(activeMission.mission_ref);
 
@@ -125,17 +143,19 @@ class MissionS extends Component {
                     this.renderPolylines(mission.route);
 
 
-                } else {
-                    if (activeMission && activeMission.mission_state === "Finished") {
-                        this.setState({
-                            activeMission: null,
-                            selectedMission: null,
-                            zoom: defaultZoom,
-                            center: defaultCenter,
-                        });
-                        this.renderPolylines([]);
-                    }
-                };
+                } else if (activeMission && activeMission.mission_state === "Finished") {
+                    this.renderPolylines([]);
+                    this.onListenForMissionHistoriesDatabase();
+
+                    this.setState({
+                        activeMission: null,
+                        selectedMission: null,
+                        zoom: defaultZoom,
+                        center: defaultCenter,
+                    });
+
+                }
+                ;
             });
     };
 
@@ -175,6 +195,38 @@ class MissionS extends Component {
                 }
             })
         });
+
+    };
+
+    onListenForMissionHistoriesDatabase = async () => {
+        await this.props.firebase
+            .missionHistories()
+            .orderBy("started_at", "desc")
+            .get().then(async snapshot => {
+                    if (!snapshot.empty) {
+                        const missionObject = snapshot.docs[0].data();
+
+                        if (missionObject && missionObject["uploaded-images"]) {
+
+                            missionObject["uploaded-images"] = Object.keys(missionObject["uploaded-images"]).map(key => ({
+                                ...missionObject["uploaded-images"][key],
+                            }));
+
+                            const mission = {
+                                ...missionObject,
+                            };
+
+                            mission.details = await this.getMissionDetails(mission.mission_ref);
+                            this.setState({
+                                resultMission: mission,
+                                center: this.missionCenter(mission.details),
+                                zoom: this.missionZoom(mission.details)
+                            });
+                        }
+                    }
+                }
+            );
+
 
     };
 
@@ -261,12 +313,12 @@ class MissionS extends Component {
 
         if (selectedMission) {
             const waypoints = selectedMission.route.map(w => {
-                return {altitude: 10, latitude: w.latitude, longitude: w.longitude}
+                return {altitude: 5, latitude: w.latitude, longitude: w.longitude}
             });
 
             const activeMission = {
                 mission_ref: selectedMission.uid,
-                mission_state: "Pending",
+                acknowledged: false,
                 waypoints
             };
 
@@ -284,18 +336,18 @@ class MissionS extends Component {
         this.setState({
             activeMission: null,
             selectedMission: null,
+            resultMission: null,
             zoom: defaultZoom,
             center: defaultCenter,
         });
-
         this.renderPolylines([]);
+        this.props.firebase.activeMission().set(null);
 
     };
 
     render() {
 
-        const {droneStatus, selectedMission, missionDropDowns, loading, activeMission, zoom, center, resultMission, prevMissionName} = this.state;
-
+        const {droneStatus, selectedMission, missionDropDowns, loading, activeMission, zoom, center, resultMission} = this.state;
 
         return (
             <Grid columns={2}>
@@ -305,32 +357,40 @@ class MissionS extends Component {
                                   className="h2"
                                   search selection
                                   onChange={this.updateSelected}
-                                  text={selectedMission ? selectedMission.name : prevMissionName ? prevMissionName : "Select Mission"}
+                                  text={selectedMission ? selectedMission.name : "Select Mission"}
                                   options={missionDropDowns}/>
                         :
                         <Dropdown fluid
                                   className="h2"
                                   search selection
                                   disabled
-                                  text={activeMission ? activeMission.name : prevMissionName}/>
+                                  text={activeMission ? activeMission.name : resultMission.details.name}/>
                         : (<Loader active inline="centered"/>)}
-                    {!activeMission ? (selectedMission && (<>
-                        <MissionCard mission={selectedMission}/>
-                        <DroneStatusCard/>
-                        <Card.Content extra>
-                            <Button fluid positive onClick={this.handleStartMission}>Start Mission</Button>
-                        </Card.Content>
-                    </>)) : (activeMission && <>
-                        <MissionCard activeMission mission={activeMission}/>
-                        <DroneStatusCard/>
-                        <Card.Content extra>
-                            <Button.Group fluid>
-                                <Button positive disabled={activeMission.state!=="Finished"}
-                                        onClick={this.handleClearResults}>Clear
-                                    Mission</Button>
-                            </Button.Group>
-                        </Card.Content>
-                    </>)}
+                    {activeMission ?
+                        <>
+                            <MissionCard activeMission mission={activeMission}/>
+                            <DroneStatusCard drone={droneStatus}/>
+                        </>
+                        : selectedMission ? <>
+                                <MissionCard selectedMission mission={selectedMission}/>
+                                <DroneStatusCard drone={droneStatus}/>
+                                <Card.Content extra>
+                                    <Button disabled={droneStatus && !droneStatus.status} fluid positive
+                                            onClick={this.handleStartMission}>Start
+                                        Mission</Button>
+                                </Card.Content>
+                            </>
+                            : resultMission && <>
+                            <MissionCard resultMission mission={resultMission}/>
+                            <DroneStatusCard drone={droneStatus}/>
+                            <Card.Content extra>
+                                <Button.Group fluid>
+                                    <Button positive
+                                            onClick={this.handleClearResults}>Clear
+                                        Mission</Button>
+                                </Button.Group>
+                            </Card.Content>
+                        </>}
                 </Grid.Column>
                 <Grid.Column width={12}>
                     <Card fluid>
@@ -349,17 +409,20 @@ class MissionS extends Component {
                                         text={index + 1}
                                     />);
                                 })}
-                                {activeMission && droneStatus && <MyGreatPlace drone
-                                                                               lat={droneStatus.location.latitude}
-                                                                               lng={droneStatus.location.longitude}
-                                                                               id={"Drone Marker"}
-                                                                               text={"Drone"}
+                                {!resultMission && droneStatus && <MyGreatPlace drone
+                                                                                lat={droneStatus.location.latitude}
+                                                                                lng={droneStatus.location.longitude}
+                                                                                id={"Drone Marker"}
+                                                                                text={"Drone"}
                                 />
                                 }
-                                {resultMission && resultMission.details.route.map((location, index) => {
-                                    return (<MyGreatPlace2
-                                        lat={location.latitude} lng={location.longitude} id={location.id}
-                                        text={index + 1}/>);
+                                {resultMission && resultMission["uploaded-images"].map((p, index) => {
+                                    return (<MyGreatPlace picture
+                                                          lat={p.location.latitude} lng={p.location.longitude}
+                                                          id={p.location.id}
+                                                          imageThumb={p.thumbnail} imageSource={p.source}
+                                                          text={index + 1} size={"large"}
+                                    />);
                                 })}
                             </GoogleMapReact>
                         </Container>

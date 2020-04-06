@@ -17,7 +17,7 @@ code {
   display: inline-block;
 }
 
-.ui.button:disabled {
+dashboardCards{
   opacity:1!important;
 }
 
@@ -37,6 +37,7 @@ code {
 .ui.disabled.search {
   opacity: 1;
 }
+
 
 .ui.modal {
   position: relative !important;

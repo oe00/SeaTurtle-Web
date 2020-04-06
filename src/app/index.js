@@ -26,7 +26,6 @@ const App = () => (
             <Navigation/>
             <Container className="stickyContainer">
                 <Route exact path={ROUTES.HOME} component={Home}/>
-                <Route exact path={ROUTES.FIRST_DEMO} component={Demo}/>
                 <Route exact path={ROUTES.MISSION} component={MissionSelection}/>
                 <Route exact path={ROUTES.MISSION_HISTORY} component={MissionResults}/>
                 <Route exact path={ROUTES.SIGN_IN} component={SignInPage}/>

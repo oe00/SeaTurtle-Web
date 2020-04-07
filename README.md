@@ -12,14 +12,14 @@
 - Login: demo@metu.edu 
 - Pass: demo123
 
-![Screenshot](images/startmission.png)
+![Screenshot](images/startmission.jpg)
 
 ![](images/editmission.gif)
 
-![Screenshot](images/activemission.png)
+![Screenshot](images/activemission.jpg)
 
-![Screenshot](images/completedmission.png)
+![Screenshot](images/resultmission.jpg)
 
-![Screenshot](images/missionhistory.png)
+![Screenshot](images/missionhistory.jpg)
 
 

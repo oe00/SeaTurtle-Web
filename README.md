@@ -20,4 +20,6 @@
 
 ![Screenshot](images/completedmission.png)
 
+![Screenshot](images/missionhistory.png)
+
 

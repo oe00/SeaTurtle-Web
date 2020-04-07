@@ -1,17 +1,5 @@
 import React, {Component} from "react";
-import {
-    Button,
-    Card,
-    Checkbox,
-    Container,
-    Dropdown,
-    Form,
-    Grid,
-    Icon, Label,
-    Loader,
-    Message, Popup,
-    Segment
-} from "semantic-ui-react";
+import {Button, Card, Container, Dropdown, Form, Grid, Icon, Message, Popup, Segment} from "semantic-ui-react";
 import GoogleMapReact from "google-map-react";
 // should be from ./Marker
 import MyGreatPlace from "./Marker";

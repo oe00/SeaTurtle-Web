@@ -128,39 +128,32 @@ class MissionS extends Component {
                         }));
                     }
 
-                    mission.state = activeMission.mission_state;
+                    mission.state = activeMission.mission_state ? activeMission.mission_state : "Pending";
                     mission.picturesTaken = images.length;
 
 
                     this.setState({
                         activeMission: mission,
                         selectedMission: mission,
+                        resultMission: null,
                         center: this.missionCenter(mission),
                         zoom: this.missionZoom(mission, true),
                     });
 
+                    this.renderPolylines([]);
                     this.onListenForDroneStatus();
                     this.renderPolylines(mission.route);
 
 
-                } else if (activeMission && activeMission.mission_state === "Finished") {
-                    this.renderPolylines([]);
+                } else if (this.state.selectedMission && activeMission && activeMission.mission_state === "Finished") {
                     this.onListenForMissionHistoriesDatabase();
-
-                    this.setState({
-                        activeMission: null,
-                        selectedMission: null,
-                        zoom: defaultZoom,
-                        center: defaultCenter,
-                    });
-
                 }
                 ;
             });
     };
 
     onListenForMissionsDatabase = () => {
-        this.setState({loading: true});
+        this.setState({missions: [], missionDropDowns: [],loading: true});
         this.props.firebase
             .missions()
             .orderBy("name", "desc")
@@ -178,7 +171,7 @@ class MissionS extends Component {
                         key: doc.id,
                         text: mission.name,
                         value: doc.id,
-                    }
+                    };
 
                     if (mission.isAllowed) {
                         this.setState({
@@ -186,8 +179,6 @@ class MissionS extends Component {
                             missionDropDowns: [missionDropDown, ...this.state.missionDropDowns],
                             loading: false,
                         });
-                    } else {
-                        this.setState({loading: false, noResults: true});
                     }
 
                 } else {
@@ -217,11 +208,16 @@ class MissionS extends Component {
                             };
 
                             mission.details = await this.getMissionDetails(mission.mission_ref);
+
+                            this.renderPolylines([]);
                             this.setState({
                                 resultMission: mission,
+                                activeMission: null,
+                                selectedMission: null,
                                 center: this.missionCenter(mission.details),
                                 zoom: this.missionZoom(mission.details)
                             });
+                            this.onListenForMissionsDatabase();
                         }
                     }
                 }
@@ -296,6 +292,7 @@ class MissionS extends Component {
             zoom: this.missionZoom(mission, false),
         });
 
+        this.renderPolylines([]);
         this.renderPolylines(mission.route);
 
     };
@@ -341,7 +338,6 @@ class MissionS extends Component {
             center: defaultCenter,
         });
         this.renderPolylines([]);
-        this.props.firebase.activeMission().set(null);
 
     };
 

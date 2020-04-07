@@ -14,10 +14,10 @@
 
 ![Screenshot](images/startmission.png)
 
+![](images/editmission.gif)
+
 ![Screenshot](images/activemission.png)
 
 ![Screenshot](images/completedmission.png)
 
-![Screenshot](images/editmission.png)
 
-![Screenshot](images/editmissionmodal.png)

@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Card, Container, Form, Grid, Message, Segment} from "semantic-ui-react";
+import {Card, Container} from "semantic-ui-react";
 import GoogleMapReact from "google-map-react";
 import MyGreatPlace from "../../pages/MissionManagementPage/Marker";
 import {getDistance} from "geolib";

@@ -5,7 +5,7 @@ import {AuthUserContext, withAuthorization, withEmailVerification,} from '../../
 import {PasswordForgetForm} from '../../components/PasswordForget';
 import PasswordChangeForm from '../../components/PasswordChange';
 
-import {Card, Container, Grid, Header,} from 'semantic-ui-react';
+import {Card, Grid, Header,} from 'semantic-ui-react';
 
 const AccountPage = () => (
     <AuthUserContext.Consumer>

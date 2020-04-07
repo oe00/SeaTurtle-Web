@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 
 
-import {Button, Card, Icon, Loader, Message, Modal, Tab, Table} from "semantic-ui-react";
+import {Icon, Menu, Message, Tab} from "semantic-ui-react";
 import MissionHistoryModal from "./MissionHistoryModal";
 import {withFirebase} from "../../components/Firebase";
 import Loading from "../../components/Loading";
@@ -68,6 +68,8 @@ class MissionH extends Component {
     render() {
         const {missions, empty} = this.state;
 
+        console.log(missions)
+
         return (
             missions.length > 0 ?
                 <Tab
@@ -76,10 +78,11 @@ class MissionH extends Component {
                     menuPosition='left'
                     panes={missions.map((mission, index) => {
                         return ({
-                            menuItem: `${mission.details.name}`,
+                            menuItem: <Menu.Item style={{borderLeftStyle: "solid",margin:"0"}}>{mission.details.name}<h5>{new Date(mission.started_at).toLocaleTimeString()}</h5></Menu.Item>,
                             render: () =>
                                 <Tab.Pane key={"active-" + index}>
-                                    <MissionHistoryModal mission={mission} refresh={() => this.onListenForMissionHistoriesDatabase()}/>
+                                    <MissionHistoryModal mission={mission}
+                                                         refresh={() => this.onListenForMissionHistoriesDatabase()}/>
                                 </Tab.Pane>
                         })
                     })}

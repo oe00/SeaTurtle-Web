@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React from "react";
 import {Card, Segment} from "semantic-ui-react";
 import {withFirebase} from "./Firebase";
 import Loading from "./Loading";

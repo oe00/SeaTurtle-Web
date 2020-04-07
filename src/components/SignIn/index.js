@@ -6,14 +6,28 @@ import {PasswordForgetLink} from '../PasswordForget';
 import {withFirebase} from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
-import {Button, Form, Grid, Header, Image, Message,} from "semantic-ui-react";
-
-import turtle from "../../turtle.jpg";
+import {Button, Card, Form, Grid, Header, Message,} from "semantic-ui-react";
 
 const SignInPage = () => (
     <Grid column={2}>
     <Grid.Column width={12}>
-      <Image ui src={turtle} fluid rounded/>
+      <Card fluid style={{
+        height: "80vh",
+        width: "100%"
+      }}>
+        <model-viewer alt="Sea Turtle" autoplay="true" auto-rotate="" auto-rotate-delay="0"
+                      camera-controls="" camera-orbit="0deg 75deg 250%%"
+                      exposure="0.85"
+                      src={"https://storage.googleapis.com/ar-answers-in-search-models/static/GreenSeaTurtle/model.glb"}
+                      style={{
+                        height: "500%",
+                        width: "100%",
+                        backgroundColor:"#3cddff",
+                        progressMask:"#F6F6F6"
+                      }}
+                      interaction-prompt="none" shadow-intensity="0.65">
+        </model-viewer>
+      </Card>
     </Grid.Column>
     <Grid.Column width={4}>
       <Grid.Row verticalAlign="bottom"/>

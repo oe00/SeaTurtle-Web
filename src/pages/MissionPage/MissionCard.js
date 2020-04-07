@@ -40,7 +40,7 @@ function MissionCard(props) {
         ) : resultMission ? (<Card fluid>
                     <Card.Content>
                         <Card.Header>
-                            Mission ´Progress
+                            Mission Results
                         </Card.Header>
                     </Card.Content>
                     <Card.Content>
@@ -48,8 +48,8 @@ function MissionCard(props) {
                             <Card.Description>
                                 <Segment.Group horizontal>
                                     <Segment>
-                                        <h3>{mission.mission_state}</h3>
-                                        State
+                                        <h3>{new Date(mission.started_at).toLocaleTimeString()}</h3>
+                                        Started At
                                     </Segment>
                                     <Segment>
                                         <h3>{mission["uploaded-images"].length}</h3>
@@ -64,7 +64,7 @@ function MissionCard(props) {
             (activeMission && <Card fluid>
                     <Card.Content>
                         <Card.Header>
-                            Mission Results
+                            Mission Progress
                         </Card.Header>
                     </Card.Content>
                     <Card.Content>

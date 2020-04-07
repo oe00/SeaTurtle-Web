@@ -1,5 +1,4 @@
 import React, {Component} from "react";
-
 import {withFirebase} from "../../components/Firebase";
 
 import {Button, Card, Grid, Icon,} from "semantic-ui-react";
@@ -143,13 +142,23 @@ class Dashboard extends Component {
                     </Card>
                 </Grid.Column>
                 <Grid.Column width={8}>
-                    <iframe style={{
-                        display: "block",
-                        border: "none",
-                        width: "100%",
-                        height: "100%"
-                    }}
-                            src="https://scene-viewer-preview.appspot.com/scene-viewer?file=https%3A%2F%2Fstorage.googleapis.com%2Far-answers-in-search-models%2Fstatic%2FGreenSeaTurtle%2Fmodel.glb&amp;title=Turtle"/>
+                    <Card fluid style={{
+                        height: "80vh",
+                        width: "100%"
+                    }}>
+                        <model-viewer alt="Sea Turtle" autoplay="true" auto-rotate="" auto-rotate-delay="0"
+                                      camera-controls="" camera-orbit="0deg 75deg 250%%"
+                                      exposure="0.85"
+                                      src={"https://storage.googleapis.com/ar-answers-in-search-models/static/GreenSeaTurtle/model.glb"}
+                                      style={{
+                                          height: "500%",
+                                          width: "100%",
+                                          backgroundColor:"#3cddff",
+                                          progressMask:"#F6F6F6"
+                                      }}
+                                      interaction-prompt="none" shadow-intensity="0.65">
+                        </model-viewer>
+                    </Card>
                 </Grid.Column>
             </Grid>
         )

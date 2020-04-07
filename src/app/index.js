@@ -8,7 +8,6 @@ import PasswordForgetPage from "../components/PasswordForget";
 import Home from "../pages/DashboardPage";
 import AccountPage from "../pages/AccountPage";
 import AdminPage from "../pages/UserManagementPage";
-import Demo from "../pages/FirstDemoPage";
 import MissionSelection from "../pages/MissionPage";
 import MissionManagement from "../pages/MissionManagementPage";
 

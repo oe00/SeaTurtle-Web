@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-
+import turtle from "../../turtle.glb"
 import {PasswordForgetLink} from '../PasswordForget';
 import {withFirebase} from '../Firebase';
 import * as ROUTES from '../../constants/routes';
@@ -18,7 +18,7 @@ const SignInPage = () => (
         <model-viewer alt="Sea Turtle" autoplay="true" auto-rotate="" auto-rotate-delay="0"
                       camera-controls="" camera-orbit="0deg 75deg 250%%"
                       exposure="0.85"
-                      src={"https://storage.googleapis.com/ar-answers-in-search-models/static/GreenSeaTurtle/model.glb"}
+                      src={turtle}
                       style={{
                         height: "500%",
                         width: "100%",

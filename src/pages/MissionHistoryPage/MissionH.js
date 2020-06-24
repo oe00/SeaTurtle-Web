@@ -54,6 +54,9 @@ class MissionH extends Component {
                     });
 
                 }
+                else{
+                    this.setState({empty: true});
+                }
             });
             if (snapshot.empty)
                 this.setState({empty: true});
@@ -68,13 +71,11 @@ class MissionH extends Component {
     render() {
         const {missions, empty} = this.state;
 
-        console.log(missions)
-
         return (
             missions.length > 0 ?
                 <Tab
-                    grid={{paneWidth: 14, tabWidth: 2}}
-                    menu={{vertical: true, fluid: true}}
+                    grid={{paneWidth: 14, tabWidth: 2,style:{display:"inline"}}}
+                    menu={{vertical: true, fluid: true,style:{overflow: 'auto', maxHeight: '500px' }}}
                     menuPosition='left'
                     panes={missions.map((mission, index) => {
                         return ({

@@ -61,7 +61,7 @@ class MissionS extends Component {
                 this.oldPath.setMap(null);
             }
 
-            this.oldPath = new maps.Polygon({
+            this.oldPath = new maps.Polyline({
                 path: locs,
                 strokeColor: '#f44336',
                 strokeOpacity: 1,
@@ -130,6 +130,7 @@ class MissionS extends Component {
 
                     mission.state = activeMission.mission_state ? activeMission.mission_state : "Pending";
                     mission.picturesTaken = images.length;
+                    mission["uploaded-images"] = images;
 
 
                     this.setState({
@@ -146,6 +147,12 @@ class MissionS extends Component {
 
 
                 } else if (this.state.selectedMission && activeMission && activeMission.mission_state === "Finished") {
+                    this.setState({
+                        activeMission: null
+                    });
+
+                    await new Promise(r => setTimeout(r, 500));
+
                     this.onListenForMissionHistoriesDatabase();
                 }
                 ;
@@ -153,7 +160,7 @@ class MissionS extends Component {
     };
 
     onListenForMissionsDatabase = () => {
-        this.setState({missions: [], missionDropDowns: [],loading: true});
+        this.setState({missions: [], missionDropDowns: [], loading: true});
         this.props.firebase
             .missions()
             .orderBy("name", "desc")
@@ -325,6 +332,7 @@ class MissionS extends Component {
                 zoom: this.missionZoom(selectedMission, true),
                 center: this.missionCenter(selectedMission),
                 activeMission: selectedMission,
+                resultMission: null,
             });
         }
     };
@@ -412,8 +420,19 @@ class MissionS extends Component {
                                                                                 text={"Drone"}
                                 />
                                 }
-                                {resultMission && resultMission["uploaded-images"].map((p, index) => {
-                                    return (<MyGreatPlace picture
+                                {!activeMission && resultMission && resultMission["uploaded-images"].map((p, index) => {
+                                    return (<MyGreatPlace
+                                        isPicture
+                                        picture={p}
+                                        lat={p.location.latitude} lng={p.location.longitude}
+                                        id={p.location.id}
+                                        imageThumb={p.thumbnail} imageSource={p.source}
+                                        text={index + 1} size={"large"}
+                                    />);
+                                })}
+                                {activeMission && activeMission["uploaded-images"] && activeMission["uploaded-images"].map((p, index) => {
+                                    return (<MyGreatPlace isPicture
+                                                          picture={p}
                                                           lat={p.location.latitude} lng={p.location.longitude}
                                                           id={p.location.id}
                                                           imageThumb={p.thumbnail} imageSource={p.source}

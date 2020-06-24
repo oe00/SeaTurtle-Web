@@ -20,6 +20,28 @@ class MissionHistoryModal extends Component {
 
     }
 
+    componentDidMount() {
+        this.onListenForPiStatus();
+    }
+
+    componentWillUnmount(){
+        this.props.firebase
+            .piStatus().off();
+    }
+
+    onListenForPiStatus = () => {
+        this.props.firebase
+            .piStatus()
+            .on("value", snapshot => {
+                const piStatus = snapshot.val();
+                {
+                    this.setState({
+                        for_canvas: true,
+                    });
+                }
+            });
+    };
+
     deleteMission = () => {
         this.props.firebase.missionHistory(this.props.mission.uid).delete().then(this.props.refresh());
     };
@@ -44,7 +66,7 @@ class MissionHistoryModal extends Component {
                                     Status
                                 </Segment>
                                 <Segment>
-                                    <h3>{mission.details.route.length}</h3>
+                                    <h3>{mission["uploaded-images"].length}</h3>
                                     Taken Pictures
                                 </Segment>
                             </Segment.Group>
@@ -65,6 +87,7 @@ class MissionHistoryModal extends Component {
                             bootstrapURLKeys={MAPS_CONFIG}
                             center={this.missionCenter(mission)}
                             zoom={this.missionZoom(mission)}
+                            options={{mapTypeControl: true, mapTypeId: "terrain"}}
                         >
                             {pictures && pictures.map((p, index) => {
                                 return (<MyGreatPlace
@@ -83,9 +106,39 @@ class MissionHistoryModal extends Component {
                 const {mission} = this.state;
                 const pictures = mission["uploaded-images"];
 
+                function f(p, i) {
+                    const c = document.getElementById("myCanvas-" + i);
+                    if (c) {
+                        var ctx = c.getContext("2d");
+                        var img = document.createElement("img");
+                        img.setAttribute("src", p.source);
+                        ctx.drawImage(img, 10, 10);
+                        ctx.font = "30px Arial";
+                        ctx.fillStyle = "red";
+                        if (p.bounding_boxes) {
+                            ctx.beginPath();
+                            ctx.lineWidth = 6;
+                            ctx.strokeStyle = 'red';
+                            p.bounding_boxes.forEach(bb => {
+                                ctx.rect(bb.xmin * 1280, bb.ymin * 720,
+                                    (bb.xmax - bb.xmin) * 1280,
+                                    (bb.ymax - bb.ymin) * 720);
+                                ctx.stroke();
+                                ctx.fillStyle = 'red';
+                                ctx.fillRect(bb.xmin * 1280, bb.ymin * 720-40,250,40)
+                                ctx.fillStyle = 'black';
+                                ctx.fillText("Sea Turtle " + (bb.score * 100).toFixed(2) + "%",
+                                    bb.xmin * 1280, bb.ymin * 720-15);
+                            })
+                        } else {
+                            ctx.fillText("Sea Turtle Not Detected.", 60, 60);
+                        }
+                    }
+                };
+
                 return (<Card.Group itemsPerRow={5}>
                     {pictures.map((picture, i) => (
-                        <Modal closeIcon trigger={<Card style={{color: "#000000"}}>
+                        <Modal style={{width:"63.5%"}} closeIcon trigger={<Card style={{color: "#000000"}}>
                             <Image wrapped src={picture.thumbnail}></Image>
                             <Segment.Group style={{marginTop: "0", marginBottom: "0"}} compact horizontal>
                                 <Segment><h2 style={{textAlign: "center"}}>{i + 1}</h2></Segment>
@@ -96,7 +149,17 @@ class MissionHistoryModal extends Component {
                             </Segment.Group>
                         </Card>}>
                             <Modal.Content>
-                                <Image wrapped src={picture.source}></Image>
+                                    <canvas
+                                        style={{
+                                          paddingLeft:"0",
+                                          paddingRight:"0",
+                                          marginLeft:"0",
+                                          marginRight:"0",
+                                          display:"block",
+                                          width:"1000px"
+                                        }}
+                                        width="1280" height="720" id={"myCanvas-" + i}/>
+                                    {f(picture, i)}
                                 <Segment.Group style={{marginBottom: "0"}} horizontal compact>
                                     <Segment>
                                         <h3>{new Date(picture.timestamp).toLocaleTimeString()}</h3>

@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {withFirebase} from "../../components/Firebase";
-
-import {Button, Card, Grid, Icon,} from "semantic-ui-react";
+import turtle from "../../turtle.glb"
+import {Button, Card, Grid, Icon, Image,} from "semantic-ui-react";
 import Loading from "../../components/Loading";
 import DroneStatusCard from "../../components/DroneStatusCard";
 
@@ -149,12 +149,12 @@ class Dashboard extends Component {
                         <model-viewer alt="Sea Turtle" autoplay="true" auto-rotate="" auto-rotate-delay="0"
                                       camera-controls="" camera-orbit="0deg 75deg 250%%"
                                       exposure="0.85"
-                                      src={"https://storage.googleapis.com/ar-answers-in-search-models/static/GreenSeaTurtle/model.glb"}
+                                      src={turtle}
                                       style={{
                                           height: "500%",
                                           width: "100%",
-                                          backgroundColor:"#3cddff",
-                                          progressMask:"#F6F6F6"
+                                          backgroundColor: "#3cddff",
+                                          progressMask: "#F6F6F6"
                                       }}
                                       interaction-prompt="none" shadow-intensity="0.65">
                         </model-viewer>

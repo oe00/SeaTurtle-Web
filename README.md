@@ -14,7 +14,7 @@
 
 ![Screenshot](images/homepage.jpg)
 
-![Screenshot](images/startmission.jpg)
+![Screenshot](images/start_mission.jpg)
 
 ![](images/editmission.gif)
 
@@ -22,6 +22,12 @@
 
 ![Screenshot](images/resultmission.jpg)
 
-![Screenshot](images/missionhistory.jpg)
+![Screenshot](images/history_1.jpg)
+![Screenshot](images/history_2.jpg)
+![Screenshot](images/history_3.jpg)
+![Screenshot](images/history_4.jpg)
+![Screenshot](images/history_5.jpg)
+![Screenshot](images/history_6.jpg)
+
 
 

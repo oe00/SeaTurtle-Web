@@ -1,7 +1,7 @@
 # Airborne Coast Monitoring System for Sea Turtle Detection and Species Classification
 
 <p align="center"> 
-<img src="images/context.png" />
+<img src="images/context.jpg" />
 </p>
 
 ### Written using React.js and Semantic UI.
@@ -18,7 +18,7 @@
 
 ![](images/editmission.gif)
 
-![Screenshot](images/activemission.jpg)
+![Screenshot](images/active_mission.jpg)
 
 ![Screenshot](images/resultmission.jpg)
 

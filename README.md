@@ -20,7 +20,7 @@
 
 ![Screenshot](images/active_mission.jpg)
 
-![Screenshot](images/resultmission.jpg)
+![Screenshot](images/result_mission.jpg)
 
 ![Screenshot](images/history_1.jpg)
 ![Screenshot](images/history_2.jpg)

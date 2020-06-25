@@ -4,6 +4,7 @@ import GoogleMapReact from "google-map-react";
 import MyGreatPlace from "./Marker";
 import {MAPS_CONFIG} from "../../config";
 import {withFirebase} from "../../components/Firebase";
+import MLCanvas from "./MLCanvas";
 
 const defaultCenter = {lat: 35.197970240448015, lng: 33.532330183981806};
 const defaultZoom = 11;
@@ -14,33 +15,12 @@ class MissionHistoryModal extends Component {
     constructor(props) {
         super(props);
 
+
         this.state = {
             mission: this.props.mission,
         };
 
     }
-
-    componentDidMount() {
-        this.onListenForPiStatus();
-    }
-
-    componentWillUnmount(){
-        this.props.firebase
-            .piStatus().off();
-    }
-
-    onListenForPiStatus = () => {
-        this.props.firebase
-            .piStatus()
-            .on("value", snapshot => {
-                const piStatus = snapshot.val();
-                {
-                    this.setState({
-                        for_canvas: true,
-                    });
-                }
-            });
-    };
 
     deleteMission = () => {
         this.props.firebase.missionHistory(this.props.mission.uid).delete().then(this.props.refresh());
@@ -50,24 +30,68 @@ class MissionHistoryModal extends Component {
         {
             menuItem: "Details",
             render: () => {
+
                 const {mission} = this.state;
+                let count = 0;
+                let accuracy = 0;
+                mission["uploaded-images"].forEach(i => {
+                    if (i.bounding_boxes) {
+                        i.bounding_boxes.forEach(r => {
+                            accuracy += r.score;
+                            count++;
+                        })
+                    }
+                });
+
                 return (
                     <Grid columns={2}>
-                        <Grid.Column width={16}>
+                        <Grid.Column width={12}>
                             <Segment.Group horizontal>
                                 <Segment>
-                                    <h3>{mission.details.distance} KM</h3>
-                                    Round Trip
+                                    <h3>{new Date(mission.started_at).toDateString()}</h3>
+                                    Executed Date
+                                </Segment>
+                                <Segment>
+                                    <h3>{new Date(mission.started_at).toLocaleTimeString()}</h3>
+                                    Started At
+                                </Segment>
+                                <Segment>
+                                    <h3>{new Date(mission.finished_at).toLocaleTimeString()}</h3>
+                                    Finished At
                                 </Segment>
                             </Segment.Group>
                             <Segment.Group horizontal>
                                 <Segment>
-                                    <h3>{mission.mission_state}</h3>
-                                    Status
+                                    <h3>{mission.details.distance} KM</h3>
+                                    Distance
                                 </Segment>
+                                <Segment>
+                                    <h3>{mission.waypoints.length}</h3>
+                                    Waypoints
+                                </Segment>
+                            </Segment.Group>
+                            <Segment.Group horizontal>
                                 <Segment>
                                     <h3>{mission["uploaded-images"].length}</h3>
                                     Taken Pictures
+                                </Segment>
+                                <Segment>
+                                    <h3>{count}</h3>
+                                    Sea Turtle Detection
+                                </Segment>
+                                <Segment>
+                                    <h3>{(accuracy/count*100).toFixed(2)}%</h3>
+                                    Average Accuracy
+                                </Segment>
+                            </Segment.Group>
+                        </Grid.Column>
+                        <Grid.Column width={4}>
+                            <Segment.Group>
+                                <Segment>
+                                    <h3>Mission Logs</h3>
+                                </Segment>
+                                <Segment style={{overflowY: 'scroll', maxHeight: '500px'}}>
+                                    {mission.mission_log.map((ml, i) => <h4>{i + 1} - {ml}</h4>)}
                                 </Segment>
                             </Segment.Group>
                         </Grid.Column>
@@ -87,7 +111,7 @@ class MissionHistoryModal extends Component {
                             bootstrapURLKeys={MAPS_CONFIG}
                             center={this.missionCenter(mission)}
                             zoom={this.missionZoom(mission)}
-                            options={{mapTypeControl: true, mapTypeId: "terrain"}}
+                            options={{mapTypeControl: true, mapTypeId: "satellite",tilt:0}}
                         >
                             {pictures && pictures.map((p, index) => {
                                 return (<MyGreatPlace
@@ -106,60 +130,22 @@ class MissionHistoryModal extends Component {
                 const {mission} = this.state;
                 const pictures = mission["uploaded-images"];
 
-                function f(p, i) {
-                    const c = document.getElementById("myCanvas-" + i);
-                    if (c) {
-                        var ctx = c.getContext("2d");
-                        var img = document.createElement("img");
-                        img.setAttribute("src", p.source);
-                        ctx.drawImage(img, 10, 10);
-                        ctx.font = "30px Arial";
-                        ctx.fillStyle = "red";
-                        if (p.bounding_boxes) {
-                            ctx.beginPath();
-                            ctx.lineWidth = 6;
-                            ctx.strokeStyle = 'red';
-                            p.bounding_boxes.forEach(bb => {
-                                ctx.rect(bb.xmin * 1280, bb.ymin * 720,
-                                    (bb.xmax - bb.xmin) * 1280,
-                                    (bb.ymax - bb.ymin) * 720);
-                                ctx.stroke();
-                                ctx.fillStyle = 'red';
-                                ctx.fillRect(bb.xmin * 1280, bb.ymin * 720-40,250,40)
-                                ctx.fillStyle = 'black';
-                                ctx.fillText("Sea Turtle " + (bb.score * 100).toFixed(2) + "%",
-                                    bb.xmin * 1280, bb.ymin * 720-15);
-                            })
-                        } else {
-                            ctx.fillText("Sea Turtle Not Detected.", 60, 60);
-                        }
-                    }
-                };
-
-                return (<Card.Group itemsPerRow={5}>
+                return (<Card.Group itemsPerRow={5} style={{overflowY: 'scroll', maxHeight: '600px' }}>
                     {pictures.map((picture, i) => (
-                        <Modal style={{width:"63.5%"}} closeIcon trigger={<Card style={{color: "#000000"}}>
+                        <Modal style={{width: "63.5%"}} closeIcon trigger={<Card style={{color: "#000000"}}>
                             <Image wrapped src={picture.thumbnail}></Image>
                             <Segment.Group style={{marginTop: "0", marginBottom: "0"}} compact horizontal>
-                                <Segment><h2 style={{textAlign: "center"}}>{i + 1}</h2></Segment>
-                                <Segment>
-                                    <h4>{new Date(picture.timestamp).toLocaleTimeString()}</h4>
-                                    Timestamp
-                                </Segment>
+                                <Segment><h3 style={{textAlign: "center"}}>
+                                    {i+1}
+                                </h3></Segment>
+                                <Segment><h3 style={{textAlign: "center"}}>
+                                    {picture.bounding_boxes ? <h3>Detected <Icon color="green" name="check"/></h3> :
+                                        <h3>Not Detected <Icon color="red" name="cancel"/></h3>}
+                                </h3></Segment>
                             </Segment.Group>
                         </Card>}>
                             <Modal.Content>
-                                    <canvas
-                                        style={{
-                                          paddingLeft:"0",
-                                          paddingRight:"0",
-                                          marginLeft:"0",
-                                          marginRight:"0",
-                                          display:"block",
-                                          width:"1000px"
-                                        }}
-                                        width="1280" height="720" id={"myCanvas-" + i}/>
-                                    {f(picture, i)}
+                                <MLCanvas picture={picture}/>
                                 <Segment.Group style={{marginBottom: "0"}} horizontal compact>
                                     <Segment>
                                         <h3>{new Date(picture.timestamp).toLocaleTimeString()}</h3>
@@ -236,7 +222,7 @@ class MissionHistoryModal extends Component {
             zoom = 13;
         }
 
-        return zoom + 1;
+        return zoom + 1.5;
     };
 
     render() {

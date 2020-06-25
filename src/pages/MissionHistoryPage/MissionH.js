@@ -75,7 +75,7 @@ class MissionH extends Component {
             missions.length > 0 ?
                 <Tab
                     grid={{paneWidth: 14, tabWidth: 2,style:{display:"inline"}}}
-                    menu={{vertical: true, fluid: true,style:{overflow: 'auto', maxHeight: '500px' }}}
+                    menu={{vertical: true, fluid: true,style:{overflow: 'auto', maxHeight: '700px' }}}
                     menuPosition='left'
                     panes={missions.map((mission, index) => {
                         return ({

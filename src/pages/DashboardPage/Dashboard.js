@@ -4,6 +4,7 @@ import turtle from "../../turtle.glb"
 import {Button, Card, Grid, Icon, Image,} from "semantic-ui-react";
 import Loading from "../../components/Loading";
 import DroneStatusCard from "../../components/DroneStatusCard";
+import MissionCard from "./MissionCard";
 
 
 class Dashboard extends Component {
@@ -15,12 +16,14 @@ class Dashboard extends Component {
             loading: false,
             droneStatus: null,
             last_online: 0,
+            resultMission: null,
         };
     }
 
     componentDidMount() {
         this.onListenForPiStatus();
         this.onListenForDroneStatus();
+        this.onListenForMissionHistoriesDatabase();
     }
 
     onListenForDroneStatus = () => {
@@ -41,6 +44,49 @@ class Dashboard extends Component {
                     });
                 }
             });
+    };
+
+    getMissionDetails = (mid) => {
+        return this.props.firebase
+            .mission(mid)
+            .get().then(doc => {
+                let details = doc.data();
+                if (details) {
+                    details.uid = mid;
+                    return details;
+                }
+            });
+    };
+
+    onListenForMissionHistoriesDatabase = async () => {
+        await this.props.firebase
+            .missionHistories()
+            .orderBy("started_at", "desc")
+            .get().then(async snapshot => {
+                    if (!snapshot.empty) {
+                        const missionObject = snapshot.docs[0].data();
+
+                        if (missionObject && missionObject["uploaded-images"]) {
+
+                            missionObject["uploaded-images"] = Object.keys(missionObject["uploaded-images"]).map(key => ({
+                                ...missionObject["uploaded-images"][key],
+                            }));
+
+                            const mission = {
+                                ...missionObject,
+                            };
+
+                            mission.details = await this.getMissionDetails(mission.mission_ref);
+
+                            this.setState({
+                                resultMission: mission,
+                            });
+                        }
+                    }
+                }
+            );
+
+
     };
 
     onListenForPiStatus = () => {
@@ -71,16 +117,16 @@ class Dashboard extends Component {
 
     render() {
 
-        const {droneStatus} = this.state;
+        const {droneStatus, resultMission} = this.state;
 
         return (
             <Grid>
-                <Grid.Column width={4}>
+                <Grid.Column width={3}>
                     {droneStatus ? <>
                             <Card fluid>
                                 <Card.Content>
                                     <Card.Header>
-                                        <h2>Drone Status</h2>
+                                        <h3>Drone Status</h3>
                                     </Card.Header>
                                     <Card fluid>
                                         <Card.Content>
@@ -100,14 +146,6 @@ class Dashboard extends Component {
                                         <Button fluid size="small" color="purple"
                                                 className="dashboardCards"> {droneStatus.battery}%</Button>
                                     </Card>
-                                    {/**<Card fluid>
-                                     <Card.Content>
-                                     <Card.Header textAlign="center"><Icon bordered size="small"
-                                     name="hdd"/> Remaining
-                                     Storage</Card.Header>
-                                     </Card.Content>
-                                     <Button fluid size="small" disabled color="blue"> {"15 GB"}</Button>
-                                     </Card>*/}
                                     <Card fluid>
                                         <Card.Content>
                                             <Card.Header textAlign="center"><Icon bordered size="small"
@@ -118,28 +156,15 @@ class Dashboard extends Component {
                                     </Card>
                                 </Card.Content>
                             </Card>
-                            <DroneStatusCard drone={droneStatus}/>
                         </>
                         :
                         <Loading size={100}/>}
                 </Grid.Column>
-                <Grid.Column width={4}>
-                    <Card fluid>
-                        <Card.Content>
-                            <Card.Header>
-                                <h2>Pi Status</h2>
-                            </Card.Header>
-                            <Card fluid>
-                                <Card.Content>
-                                    <Card.Header textAlign="center">
-                                        <Icon bordered size="small" name="wifi"/>
-                                        Connection Status</Card.Header>
-                                </Card.Content>
-                                {droneStatus && <Button fluid size="small" className="dashboardCards"
-                                                        color={droneStatus && droneStatus.status ? "green" : "red"}> {droneStatus && droneStatus.status ? "Online" : "Offline"}</Button>}
-                            </Card>
-                        </Card.Content>
-                    </Card>
+                <Grid.Column width={5}>
+                    {resultMission && <>
+                        <MissionCard resultMission mission={resultMission}/>
+                        <DroneStatusCard drone={droneStatus}/>
+                    </>}
                 </Grid.Column>
                 <Grid.Column width={8}>
                     <Card fluid style={{

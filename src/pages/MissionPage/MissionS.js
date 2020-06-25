@@ -128,6 +128,9 @@ class MissionS extends Component {
                         }));
                     }
 
+                    mission.started_at = activeMission.started_at;
+                    mission.waypoints = activeMission.waypoints;
+                    mission.mission_log = activeMission.mission_log;
                     mission.state = activeMission.mission_state ? activeMission.mission_state : "Pending";
                     mission.picturesTaken = images.length;
                     mission["uploaded-images"] = images;
@@ -142,20 +145,15 @@ class MissionS extends Component {
                     });
 
                     this.renderPolylines([]);
-                    this.onListenForDroneStatus();
                     this.renderPolylines(mission.route);
 
 
                 } else if (this.state.selectedMission && activeMission && activeMission.mission_state === "Finished") {
-                    this.setState({
-                        activeMission: null
-                    });
 
-                    await new Promise(r => setTimeout(r, 500));
+                    await new Promise(r => setTimeout(r, 2000));
 
                     this.onListenForMissionHistoriesDatabase();
-                }
-                ;
+                };
             });
     };
 
@@ -217,14 +215,14 @@ class MissionS extends Component {
                             mission.details = await this.getMissionDetails(mission.mission_ref);
 
                             this.renderPolylines([]);
+
                             this.setState({
                                 resultMission: mission,
                                 activeMission: null,
                                 selectedMission: null,
                                 center: this.missionCenter(mission.details),
-                                zoom: this.missionZoom(mission.details)
+                                zoom: this.missionZoom(mission.details,true)
                             });
-                            this.onListenForMissionsDatabase();
                         }
                     }
                 }
@@ -269,20 +267,20 @@ class MissionS extends Component {
         let zoom = defaultZoom;
 
         if (mission.distance > 0) {
-            zoom = 19;
+            zoom = 20;
         }
 
         if (mission.distance > 1) {
-            zoom = 16;
+            zoom = 17;
         }
         if (mission.distance > 2) {
-            zoom = 15;
+            zoom = 16;
         }
         if (mission.distance > 4) {
-            zoom = 14;
+            zoom = 15;
         }
         if (mission.distance > 8) {
-            zoom = 13;
+            zoom = 14;
         }
         return isActive ? zoom + 1 : zoom;
     };
@@ -346,6 +344,7 @@ class MissionS extends Component {
             center: defaultCenter,
         });
         this.renderPolylines([]);
+        this.onListenForMissionsDatabase();
 
     };
 
@@ -403,7 +402,7 @@ class MissionS extends Component {
                                 bootstrapURLKeys={MAPS_CONFIG}
                                 center={center}
                                 zoom={zoom}
-                                options={{mapTypeControl: true, mapTypeId: "terrain"}}
+                                options={{mapTypeControl: true, mapTypeId: "satellite",tilt:0}}
                                 yesIWantToUseGoogleMapApiInternals
                                 onGoogleApiLoaded={({map, maps}) => this.passMapReference(map, maps)}
                             >

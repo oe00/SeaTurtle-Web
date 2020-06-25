@@ -13,7 +13,7 @@ const mapBorder = {width: "100% ", height: "80vh"};
 //{lat: 35.197970240448015, lng: 33.532330183981806};
 const defaultCenter = {lat:-35.3631,lng:149.1653};
 //9
-const defaultZoom = 19;
+const defaultZoom = 19.5;
 
 const initState = {
     loading: false,
@@ -110,7 +110,7 @@ class MissionM extends Component {
             this.oldPath.setMap(null);
         }
 
-        this.oldPath = new maps.Polygon({
+        this.oldPath = new maps.Polyline({
             path: locs,
             strokeColor: '#f44336',
             strokeOpacity: 1,
@@ -215,7 +215,7 @@ class MissionM extends Component {
         let zoom = defaultZoom;
 
         if (mission.distance > 0) {
-            zoom = 19;
+            zoom = 19.5;
         }
 
         if (mission.distance > 1) {
@@ -231,7 +231,7 @@ class MissionM extends Component {
             zoom = 12;
         }
 
-        return zoom + 1;
+        return zoom + 0.5;
     };
 
     submitMe = () => {
@@ -482,7 +482,7 @@ class MissionM extends Component {
                         <Container style={mapBorder}>
                             <GoogleMapReact
                                 bootstrapURLKeys={MAPS_CONFIG}
-                                options={{mapTypeControl: true, mapTypeId: "terrain"}}
+                                options={{mapTypeControl: true, mapTypeId: "satellite",tilt:0}}
                                 center={this.missionCenter(mission)}
                                 zoom={this.missionZoom(mission)}
                                 onChildMouseDown={() => this.setState({
@@ -508,14 +508,6 @@ class MissionM extends Component {
                                         handleRightClick={this.handleChildClick}
                                     />);
                                 })}
-                                {/** delete drone*/}
-                                {droneStatus && <MyGreatPlace drone
-                                                              lat={droneStatus.location.latitude}
-                                                              lng={droneStatus.location.longitude}
-                                                              id={"Drone Marker"}
-                                                              text={"Drone"}
-                                />
-                                }
                             </GoogleMapReact>
                         </Container>
                     </Card>

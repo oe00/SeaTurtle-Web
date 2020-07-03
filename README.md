@@ -8,9 +8,6 @@
 ### Fully firebase integrated: Real-time DB, Firestore, Storage, Hosting, Auth, ML Kit
 
 
-#### [Check the deployed version!](https://seaturtle.cloud/)
-- Login: demo@metu.edu 
-- Pass: demo123
 
 ![Screenshot](images/homepage.jpg)
 

@@ -4,20 +4,23 @@
 <img src="images/context.jpg" />
 </p>
 
-### Written using React.js and Semantic UI.
-### Fully firebase integrated: Real-time DB, Firestore, Storage, Hosting, Auth, ML Kit
+### React.js and Semantic UI based web client / portal for the system.
 
+### Used Firebase Modules: Real-time DB, Firestore, Storage, Hosting, Auth, ML Kit
 
+#### Homepage
 
 ![Screenshot](images/homepage.jpg)
 
-![Screenshot](images/start_mission.jpg)
+#### Mission Management Page (CRUD) - Demo
 
 ![](images/editmission.gif)
 
-![Screenshot](images/active_mission.jpg)
+#### Mission Execution Page - Demo
 
-![Screenshot](images/result_mission.jpg)
+![](images/runmission.gif)
+
+#### Mission History Page
 
 ![Screenshot](images/history_1.jpg)
 ![Screenshot](images/history_2.jpg)
@@ -25,6 +28,3 @@
 ![Screenshot](images/history_4.jpg)
 ![Screenshot](images/history_5.jpg)
 ![Screenshot](images/history_6.jpg)
-
-
-

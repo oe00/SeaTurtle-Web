@@ -8,7 +8,7 @@
 
 ### Used Firebase Modules: Real-time DB, Firestore, Storage, Hosting, Auth, ML Kit
 
-#### Homepage
+#### Dashboard
 
 ![Screenshot](images/homepage.jpg)
 

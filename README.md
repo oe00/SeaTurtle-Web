@@ -4,7 +4,9 @@
 <img src="images/context.jpg" />
 </p>
 
-### React.js and Semantic UI based web client / portal for the system.
+## Features
+
+Real-time mission tracking, real-time updates, mission management (crud) with gmaps integration, mission history management, user management, various serverless functions for trigger based operations
 
 ### Used Firebase Modules: Real-time DB, Firestore, Storage, Hosting, Auth, ML Kit
 
